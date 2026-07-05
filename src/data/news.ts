@@ -1,0 +1,82 @@
+import type { NewsItem } from "@/types";
+
+// Placeholder news feed. Items flagged `highlighted` also appear in the home
+// carousel. Ordered newest first.
+
+export const news: NewsItem[] = [
+  {
+    id: "n-sensys-2026",
+    title: "Paper accepted at ACM SenSys 2026",
+    venue: "ACM SenSys 2026",
+    date: "June 2026",
+    year: 2026,
+    people: ["Arjun Mehta", "Dr. Rohan Iyer", "Dr. Ananya Verma"],
+    href: "#",
+    highlighted: true,
+  },
+  {
+    id: "n-chi-2026",
+    title: "Honorable Mention at ACM CHI 2026",
+    venue: "ACM CHI 2026",
+    date: "May 2026",
+    year: 2026,
+    people: ["Arjun Mehta", "Priya Deshmukh"],
+    href: "#",
+    highlighted: true,
+  },
+  {
+    id: "n-percom-2026",
+    title: "Full paper accepted at IEEE PerCom 2026",
+    venue: "IEEE PerCom 2026",
+    date: "March 2026",
+    year: 2026,
+    people: ["Kabir Rao"],
+    href: "#",
+    highlighted: true,
+  },
+  {
+    id: "n-icdcn-2026",
+    title: "Lab presents at ICDCN 2026",
+    venue: "ICDCN 2026",
+    date: "January 2026",
+    year: 2026,
+    people: ["Nisha Gupta"],
+    href: "#",
+    highlighted: true,
+  },
+  {
+    id: "n-comsnets-2026",
+    title: "Talk on edge intelligence at COMSNETS 2026",
+    venue: "COMSNETS 2026",
+    date: "January 2026",
+    year: 2026,
+    people: ["Dr. Ananya Verma"],
+    href: "#",
+    highlighted: true,
+  },
+  {
+    id: "n-grant-2025",
+    title: "New project funded by the Science & Technology Board",
+    venue: "Funding",
+    date: "November 2025",
+    year: 2025,
+    href: "#",
+  },
+  {
+    id: "n-imwut-2025",
+    title: "Journal paper published in ACM IMWUT",
+    venue: "ACM IMWUT 2025",
+    date: "September 2025",
+    year: 2025,
+    people: ["Priya Deshmukh"],
+    href: "#",
+  },
+  {
+    id: "n-welcome-2025",
+    title: "Lab welcomes new PhD scholars for the 2025 cohort",
+    venue: "Lab news",
+    date: "August 2025",
+    year: 2025,
+    href: "#",
+  },
+];

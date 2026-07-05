@@ -1,0 +1,380 @@
+@import "tailwindcss";
+
+/*
+  Design tokens live here as the single source of truth. Raw values sit on :root,
+  then @theme inline exposes them to Tailwind so utilities like bg-surface or
+  text-primary resolve straight to these variables. No raw color belongs anywhere
+  outside this file.
+*/
+
+:root {
+  /* base */
+  --bg: #ffffff;
+  --surface: #faf9f7; /* off-white sections */
+  --surface-2: #f2f1ee; /* cards, subtle fills */
+  --border: #e6e4e0;
+
+  /* text (Google-style contrast) */
+  --text: #0a0a0a; /* headings / primary */
+  --text-secondary: #3f3f3f;
+  --text-muted: #6b6b6b;
+
+  /* accent, orange scale. Tuned so white text on --primary and --primary text on
+     white both clear WCAG AA (~5.2:1); the neon #ff5c00 fails that at 3.09:1. */
+  --primary: #c2410c;
+  --primary-hover: #9a3412;
+  --primary-soft: #fff1e8; /* tinted backgrounds */
+
+  /* bright coral, for decorative frames, large text, and highlight blocks only.
+     Never small body text on light (it clears AA only as large text). */
+  --accent: #ef4b34;
+  --accent-hover: #d63f2a;
+
+  /* text that sits on the orange accent */
+  --on-primary: #ffffff;
+
+  /* inversion / dark blocks */
+  --ink: #101010;
+  --on-ink: #f7f7f5;
+
+  /* feedback */
+  --success: #166534;
+  --success-soft: #e7f4ea;
+  --danger: #b42318;
+  --danger-soft: #fdeceb;
+
+  /* radii */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  /* elevation */
+  --elev-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --elev-lift: 0 2px 4px rgba(0, 0, 0, 0.05), 0 18px 40px rgba(0, 0, 0, 0.1);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 0.18s;
+  --dur-base: 0.32s;
+  --dur-slow: 0.6s;
+}
+
+@theme inline {
+  /* colors */
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-foreground: var(--text);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-primary: var(--on-primary);
+  --color-ink: var(--ink);
+  --color-on-ink: var(--on-ink);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  /* radii */
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-pill: var(--r-pill);
+
+  /* elevation */
+  --shadow-card: var(--elev-card);
+  --shadow-lift: var(--elev-lift);
+
+  /* fonts, wired from next/font */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-signature: var(--font-great-vibes), cursive;
+
+  /* fluid type scale */
+  --text-hero: clamp(2.75rem, 6.5vw, 5rem);
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.03em;
+  --text-display: clamp(2.5rem, 5.5vw, 4rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: clamp(2rem, 4.5vw, 3rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.015em;
+  --text-h2: clamp(1.75rem, 3.6vw, 2.25rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.25;
+  --text-lead: clamp(1.05rem, 1.6vw, 1.2rem);
+  --text-lead--line-height: 1.6;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-foreground);
+  }
+
+  /* Enabled buttons and button-like controls always show the pointer cursor. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+
+  /* Visible, token-driven focus ring for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+  Headings adopt the staggered menu's treatment site-wide: Manrope, extra-bold,
+  uppercase, tight tracking. Kept unlayered so it wins over the per-heading weight
+  and tracking utilities without editing every heading. Change here to retune all.
+*/
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+}
+
+/*
+  When the hiring banner is dismissed, the home hero grows to the full viewport in
+  step with the banner's height collapse (both use --dur-base), so the reveal is
+  one smooth motion. The hero's default min-height already leaves room for the bar.
+*/
+body:has(.hiring-banner[data-dismissed]) .hero-fill {
+  min-height: 100svh;
+}
+
+/* Registered so the conic gradient angle can animate for the running card border. */
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-run {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+/*
+  Running gradient border revealed on hover: a masked ring paints a conic gradient in
+  the theme colors, and the angle animates so the bright segment travels around the
+  card. Pure CSS, so cards stay server components. Respects reduced motion.
+*/
+.running-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    var(--color-primary) 15%,
+    var(--color-accent) 30%,
+    transparent 45%
+  );
+  mask:
+    linear-gradient(black 0 0) content-box,
+    linear-gradient(black 0 0);
+  -webkit-mask:
+    linear-gradient(black 0 0) content-box,
+    linear-gradient(black 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.running-border:hover::before {
+  opacity: 1;
+  animation: border-run 2.5s linear infinite;
+  filter: drop-shadow(0 0 3px color-mix(in oklab, var(--color-primary) 45%, transparent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .running-border:hover::before {
+    animation: none;
+  }
+}
+
+/* Thin, theme-aware scrollbar: a quiet grey rail that warms to the orange accent
+   on hover. Firefox uses the standard properties; WebKit/Blink use the pseudos. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-foreground) 28%, transparent) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--color-foreground) 28%, transparent);
+  border-radius: var(--r-pill);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary);
+}
+
+/* Opt-in thin scrollbar for inner scroll areas (modals, panels), matching the page
+   scrollbar so nested overflow never shows a chunky default bar. */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-foreground) 28%, transparent) transparent;
+}
+
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--color-foreground) 28%, transparent);
+  border-radius: var(--r-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary);
+}
+
+/* Toast (sonner) type icons tinted with the feedback tokens. */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--color-success);
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--color-danger);
+}
+
+/* Faint bento grid that fades out toward the edges, to fill otherwise-empty
+   section backgrounds. Pure CSS (no repaint on scroll), decorative only. */
+.grid-backdrop {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3.5rem 3.5rem;
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 40%, black 25%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 40%, black 25%, transparent 78%);
+}
+
+/* Loading skeleton with a diagonal glare that sweeps across, adapted from the
+   React Bits Glare Hover effect but running continuously as a load state. */
+@keyframes skeleton-glare {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface-2);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 25%,
+    color-mix(in oklab, var(--color-background) 72%, transparent) 50%,
+    transparent 75%
+  );
+  animation: skeleton-glare 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}

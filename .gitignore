@@ -1,0 +1,61 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# test + build artifacts (reports/output, not the test files themselves)
+/coverage
+/playwright-report
+/test-results
+/blob-report
+/playwright/.cache
+
+# e2e test suite (not pushed)
+/e2e/
+playwright.config.ts
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files (contain real secrets: DB password, service-role key). Never push.
+.env
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# editors
+.vscode/
+.idea/
+*.swp
+
+# os
+Thumbs.db
+
+# logs
+*.log
+
+# AI / agent tooling config (not part of the website)
+.claude/
+CLAUDE.md
+.mcp.json
+/.agents/
+/docs/
+skills-lock.json
+
+# local dev resume storage
+/.uploads/

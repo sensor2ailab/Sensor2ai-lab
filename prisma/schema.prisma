@@ -1,0 +1,176 @@
+// Prisma schema for the research-lab platform backend.
+// App traffic connects via the Supabase transaction pooler (DATABASE_URL, :6543);
+// migrations use the direct connection (DIRECT_URL, :5432).
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [citext, pgcrypto]
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum ApplicationStatus {
+  pending
+  approved
+  rejected
+  withdrawn
+}
+
+model User {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email              String    @unique @db.Citext
+  passwordHash       String    @map("password_hash")
+  role               Role      @default(user)
+  fullName           String    @map("full_name")
+  phone              String?
+  isActive           Boolean   @default(true) @map("is_active")
+  mustChangePassword Boolean   @default(false) @map("must_change_password")
+  tokenVersion       Int       @default(0) @map("token_version")
+  lastLoginAt        DateTime? @map("last_login_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  refreshTokens        RefreshToken[]
+  passwordResetTokens  PasswordResetToken[]
+  createdApplications  Application[]         @relation("ApplicationCreatedUser")
+  reviewedApplications Application[]         @relation("ApplicationReviewedBy")
+
+  @@index([role])
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @map("token_hash")
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt  DateTime? @map("revoked_at") @db.Timestamptz(6)
+  replacedBy String?   @map("replaced_by") @db.Uuid
+  userAgent  String?   @map("user_agent")
+  ip         String?
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}
+
+model Publication {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bibtexKey String?  @map("bibtex_key")
+  entryType String?  @map("entry_type")
+  title     String
+  authors   Json     @default("[]") @db.JsonB
+  year      Int?
+  venue     String?
+  volume    String?
+  number    String?
+  pages     String?
+  publisher String?
+  doi       String?  @unique
+  url       String?
+  abstract  String?
+  rawBibtex String   @map("raw_bibtex")
+  // Maintained by a trigger (see migration); queried via raw SQL for full-text search.
+  searchTsv Unsupported("tsvector")? @map("search_tsv")
+  createdBy String?  @map("created_by") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([year])
+  @@index([bibtexKey])
+  @@map("publications")
+}
+
+model Job {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  description    String
+  location       String?
+  employmentType String?  @map("employment_type")
+  isOpen         Boolean  @default(true) @map("is_open")
+  createdBy      String?  @map("created_by") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  applications Application[]
+
+  @@index([isOpen, createdAt])
+  @@map("jobs")
+}
+
+model Application {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId         String            @map("job_id") @db.Uuid
+  job           Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  name          String
+  email         String            @db.Citext
+  phone         String
+  resumeLink    String            @map("resume_link")
+  coverLetter   String?           @map("cover_letter")
+  status        ApplicationStatus @default(pending)
+  reviewedBy    String?           @map("reviewed_by") @db.Uuid
+  reviewer      User?             @relation("ApplicationReviewedBy", fields: [reviewedBy], references: [id])
+  reviewedAt    DateTime?         @map("reviewed_at") @db.Timestamptz(6)
+  createdUserId String?           @map("created_user_id") @db.Uuid
+  createdUser   User?             @relation("ApplicationCreatedUser", fields: [createdUserId], references: [id])
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([jobId, status])
+  @@index([email])
+  @@index([status, createdAt])
+  @@map("applications")
+}
+
+model Announcement {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  body        String
+  link        String?
+  published   Boolean   @default(false)
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(6)
+  createdBy   String?   @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([published, publishedAt(sort: Desc)])
+  @@map("announcements")
+}
+
+model AuditLog {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId  String?  @map("actor_id") @db.Uuid
+  action   String
+  entity   String
+  entityId String?  @map("entity_id") @db.Uuid
+  metadata Json     @default("{}") @db.JsonB
+  ip       String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([entity, entityId])
+  @@index([actorId, createdAt])
+  @@map("audit_logs")
+}
