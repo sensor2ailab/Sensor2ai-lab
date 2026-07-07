@@ -6,6 +6,7 @@ export interface PublicationDto {
   bibtexKey: string | null;
   title: string;
   authors: string[];
+  tags: string[];
   year: number | null;
   venue: string | null;
   volume: string | null;
@@ -27,6 +28,7 @@ export function toPublicationDto(pub: Publication): PublicationDto {
     bibtexKey: pub.bibtexKey,
     title: pub.title,
     authors: Array.isArray(pub.authors) ? (pub.authors as string[]) : [],
+    tags: Array.isArray(pub.tags) ? (pub.tags as string[]) : [],
     year: pub.year,
     venue: pub.venue,
     volume: pub.volume,

@@ -39,6 +39,9 @@ export function PublicationsBoard() {
 
   const [search, setSearch] = useState("");
   const [type, setType] = useState("All");
+  const [activeTags, setActiveTags] = useState<string[]>([]);
+  const toggleTag = (tag: string) =>
+    setActiveTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Publication | null>(null);
@@ -91,18 +94,24 @@ export function PublicationsBoard() {
     return ["All", ...Array.from(set).sort()];
   }, [pubs]);
 
+  const allTags = useMemo(
+    () => Array.from(new Set(pubs.flatMap((p) => p.tags))).sort((a, b) => a.localeCompare(b)),
+    [pubs],
+  );
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return pubs.filter((p) => {
       const matchType = type === "All" || pubTypeLabel(p.entryType) === type;
+      const matchTags = activeTags.every((t) => p.tags.includes(t));
       const matchSearch =
         !q ||
         p.title.toLowerCase().includes(q) ||
         p.authors.join(", ").toLowerCase().includes(q) ||
         (p.venue ?? "").toLowerCase().includes(q);
-      return matchType && matchSearch;
+      return matchType && matchTags && matchSearch;
     });
-  }, [pubs, search, type]);
+  }, [pubs, search, type, activeTags]);
 
   const years = useMemo(
     () => Array.from(new Set(filtered.map((p) => p.year ?? 0))).sort((a, b) => b - a),
@@ -120,6 +129,44 @@ export function PublicationsBoard() {
       { label: "Latest", value: latest ? String(latest) : "N/A" },
     ];
   }, [pubs]);
+
+  // Persist a publication's tag list. The UI updates optimistically so the chip
+  // appears/disappears instantly; if the request fails we roll back and report it.
+  // Also drops any active tag filter that no longer exists so the chip row stays honest.
+  async function saveTags(pub: Publication, tags: string[], successMsg: string) {
+    const prevPubs = pubs;
+    const prevActive = activeTags;
+    const next = pubs.map((p) => (p.id === pub.id ? { ...p, tags } : p));
+    setPubs(next);
+    setActiveTags((prev) => prev.filter((t) => next.some((p) => p.tags.includes(t))));
+    try {
+      const res = await authFetch(`/publications/${pub.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tags }),
+      });
+      if (!res.ok) {
+        setPubs(prevPubs);
+        setActiveTags(prevActive);
+        toast.error(await errorFromResponse(res));
+        return;
+      }
+      toast.success(successMsg);
+    } catch {
+      setPubs(prevPubs);
+      setActiveTags(prevActive);
+      toast.error("Network error, please try again.");
+    }
+  }
+
+  const addTag = (pub: Publication, tag: string) =>
+    saveTags(pub, [...pub.tags, tag], "Tag added");
+  const removeTag = (pub: Publication, tag: string) =>
+    saveTags(
+      pub,
+      pub.tags.filter((t) => t !== tag),
+      "Tag removed",
+    );
 
   async function confirmDelete() {
     if (!deleteTarget) return;
@@ -225,6 +272,27 @@ export function PublicationsBoard() {
               ))}
             </div>
           ) : null}
+          {allTags.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted mr-1 text-xs font-semibold tracking-[0.12em] uppercase">
+                Tags
+              </span>
+              {allTags.map((tag) => (
+                <Chip key={tag} active={activeTags.includes(tag)} onClick={() => toggleTag(tag)}>
+                  {tag}
+                </Chip>
+              ))}
+              {activeTags.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setActiveTags([])}
+                  className="text-muted hover:text-primary text-sm underline underline-offset-2"
+                >
+                  Clear
+                </button>
+              ) : null}
+            </div>
+          ) : null}
           <p className="text-muted text-sm">
             Showing {filtered.length} of {pubs.length} publications
           </p>
@@ -259,6 +327,10 @@ export function PublicationsBoard() {
                       <PubItem
                         pub={pub}
                         isAdmin={isAdmin}
+                        activeTags={activeTags}
+                        onTagToggle={toggleTag}
+                        onAddTag={addTag}
+                        onRemoveTag={removeTag}
                         onEdit={(p) => {
                           setEditing(p);
                           setFormOpen(true);

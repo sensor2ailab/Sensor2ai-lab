@@ -1,4 +1,4 @@
-import type { Application } from "@prisma/client";
+import { Prisma, type Application } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 import { Errors } from "@/server/http/errors";
 import { cursorArgs, toPage, type Page } from "@/server/http/pagination";
@@ -23,16 +23,24 @@ export async function submitApplication(input: SubmitApplicationInput): Promise<
   if (!job) throw Errors.notFound("Job not found");
   if (!job.isOpen) throw Errors.badRequest("This position is no longer accepting applications");
 
-  return prisma.application.create({
-    data: {
-      jobId: input.jobId,
-      name: input.name,
-      email: input.email,
-      phone: input.phone,
-      coverLetter: input.coverLetter,
-      resumeLink: input.resumeLink,
-    },
-  });
+  try {
+    return await prisma.application.create({
+      data: {
+        jobId: input.jobId,
+        name: input.name,
+        email: input.email,
+        phone: input.phone,
+        coverLetter: input.coverLetter,
+        resumeLink: input.resumeLink,
+      },
+    });
+  } catch (e) {
+    // Unique (job_id, email): the applicant already applied to this posting.
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      throw Errors.conflict("You have already applied to this position.");
+    }
+    throw e;
+  }
 }
 
 export interface ListApplicationsParams {

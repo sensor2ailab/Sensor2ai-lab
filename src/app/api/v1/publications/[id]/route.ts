@@ -20,6 +20,7 @@ const patchSchema = z
     bibtexKey: z.string().nullable().optional(),
     title: z.string().min(1).optional(),
     authors: z.array(z.string()).optional(),
+    tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(),
     year: z.number().int().min(1000).max(9999).nullable().optional(),
     venue: z.string().nullable().optional(),
     volume: z.string().nullable().optional(),

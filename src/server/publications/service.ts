@@ -13,6 +13,7 @@ export interface PublicationData {
   bibtexKey: string | null;
   title: string;
   authors: string[];
+  tags: string[];
   year: number | null;
   venue: string | null;
   volume: string | null;
@@ -45,7 +46,9 @@ export async function createPublication(
   createdBy: string,
 ): Promise<Publication> {
   await assertUnique(data.doi, data.bibtexKey);
-  return prisma.publication.create({ data: { ...data, authors: data.authors, createdBy } });
+  return prisma.publication.create({
+    data: { ...data, authors: data.authors, tags: data.tags, createdBy },
+  });
 }
 
 export async function getPublication(id: string): Promise<Publication> {
@@ -63,6 +66,7 @@ export async function updatePublication(
   const data: Prisma.PublicationUpdateInput = {
     ...patch,
     ...(patch.authors ? { authors: patch.authors } : {}),
+    ...(patch.tags ? { tags: patch.tags } : {}),
   };
   return prisma.publication.update({ where: { id }, data });
 }

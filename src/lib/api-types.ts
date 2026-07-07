@@ -41,6 +41,7 @@ export interface Publication {
   bibtexKey: string | null;
   title: string;
   authors: string[];
+  tags: string[];
   year: number | null;
   venue: string | null;
   volume: string | null;

@@ -84,6 +84,8 @@ model Publication {
   entryType String?  @map("entry_type")
   title     String
   authors   Json     @default("[]") @db.JsonB
+  // Free-form curator tags (string array), editable by admins and used as filters.
+  tags      Json     @default("[]") @db.JsonB
   year      Int?
   venue     String?
   volume    String?
@@ -139,6 +141,7 @@ model Application {
   createdUser   User?             @relation("ApplicationCreatedUser", fields: [createdUserId], references: [id])
   createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
 
+  @@unique([jobId, email])
   @@index([jobId, status])
   @@index([email])
   @@index([status, createdAt])
