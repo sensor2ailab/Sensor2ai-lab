@@ -6,6 +6,7 @@ import type { LinkType, Person } from "@/types";
 import { initials } from "@/lib/initials";
 import { cn } from "@/lib/cn";
 import { GitHubIcon, LinkedInIcon, ScholarIcon } from "@/components/brand/SocialIcons";
+import { CertificateViewer } from "@/components/team/CertificateViewer";
 
 type IconComponent = ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" }>;
 
@@ -54,6 +55,10 @@ export function PersonCard({ person }: { person: Person }) {
       <h3 className={cn("font-semibold", featured ? "text-2xl" : "text-lg")}>{person.name}</h3>
       <p className="text-primary mt-1 text-sm font-medium">{person.role}</p>
       {person.focus ? <p className="text-secondary mt-2 text-sm">{person.focus}</p> : null}
+
+      {person.certificate ? (
+        <CertificateViewer src={person.certificate} name={person.name} />
+      ) : null}
 
       {person.links?.length ? (
         <ul className="bg-accent absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center transition-transform duration-[var(--dur-base)] ease-[var(--ease-out)] group-focus-within:translate-y-0 group-hover:translate-y-0">

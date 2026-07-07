@@ -21,6 +21,7 @@ export function TeamTabs() {
     <Tabs
       items={[
         { id: "current", label: "Current Team", content: <Groups groups={team.current} /> },
+        { id: "interns", label: "Interns", content: <Groups groups={team.interns} /> },
         { id: "alumni", label: "Alumni & Past Members", content: <Groups groups={team.alumni} /> },
       ]}
     />

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" role="img" aria-label="Internship certificate for Vikram Singh">
+  <rect width="1000" height="720" fill="#faf9f7"/>
+  <rect x="24" y="24" width="952" height="672" fill="none" stroke="#c2410c" stroke-width="3"/>
+  <rect x="40" y="40" width="920" height="640" fill="none" stroke="#ef4b34" stroke-width="1"/>
+  <text x="500" y="150" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" letter-spacing="6" fill="#c2410c">SENSOR2AI LAB</text>
+  <text x="500" y="230" text-anchor="middle" font-family="Georgia, serif" font-size="46" font-weight="bold" fill="#101010">Certificate of Internship</text>
+  <line x1="380" y1="262" x2="620" y2="262" stroke="#ef4b34" stroke-width="2"/>
+  <text x="500" y="330" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#555">This is to certify that</text>
+  <text x="500" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#101010">Vikram Singh</text>
+  <text x="500" y="470" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#555">successfully completed a Research Internship in 2023,</text>
+  <text x="500" y="502" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#555">contributing to work on edge inference benchmarking.</text>
+  <line x1="150" y1="620" x2="360" y2="620" stroke="#101010" stroke-width="1"/>
+  <text x="255" y="648" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#555">Principal Investigator</text>
+  <line x1="640" y1="620" x2="850" y2="620" stroke="#101010" stroke-width="1"/>
+  <text x="745" y="648" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#555">Date</text>
+</svg>

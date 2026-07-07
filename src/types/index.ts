@@ -24,6 +24,9 @@ export interface Person {
   image?: string;
   links?: PersonLink[];
   featured?: boolean;
+  // Path (under /public) to an internship certificate. Past interns only; when set,
+  // the card shows a "View certificate" action that opens a pop-up image viewer.
+  certificate?: string;
 }
 
 export interface TeamGroup {
@@ -34,6 +37,7 @@ export interface TeamGroup {
 
 export interface TeamData {
   current: TeamGroup[];
+  interns: TeamGroup[];
   alumni: TeamGroup[];
 }
 

@@ -2,7 +2,8 @@ import type { TeamData } from "@/types";
 
 // Placeholder team roster. Names, roles, and focus areas are stand-ins that read
 // as a credible academic lab; swap for real members later. No images yet, so cards
-// fall back to monogram avatars.
+// fall back to monogram avatars. Past interns carry a `certificate` path (placeholder
+// SVGs under /public) that the card opens in a pop-up viewer.
 
 export const team: TeamData = {
   current: [
@@ -94,24 +95,49 @@ export const team: TeamData = {
       ],
     },
     {
-      id: "interns-2025",
-      title: "Interns (2025)",
-      members: [
-        { name: "Ishan Patel", role: "Research Intern" },
-        { name: "Ananya Roy", role: "Research Intern" },
-      ],
-    },
-    {
-      id: "interns-2023",
-      title: "Interns (2023)",
-      members: [{ name: "Vikram Singh", role: "Research Intern" }],
-    },
-    {
       id: "ugrv",
       title: "Undergraduate Research Volunteers",
       members: [
         { name: "Riya Kapoor", role: "Volunteer, Smart Health project" },
         { name: "Dev Malhotra", role: "Volunteer, SensePod project" },
+      ],
+    },
+  ],
+  interns: [
+    {
+      id: "present-interns",
+      title: "Present Interns",
+      members: [
+        {
+          name: "Ishan Patel",
+          role: "Research Intern",
+          focus: "Low-power firmware for sensor nodes",
+          links: [{ type: "linkedin", href: "https://www.linkedin.com/" }],
+        },
+        {
+          name: "Ananya Roy",
+          role: "Research Intern",
+          focus: "Data pipelines for activity datasets",
+        },
+      ],
+    },
+    {
+      id: "past-interns",
+      title: "Past Interns",
+      members: [
+        {
+          name: "Vikram Singh",
+          role: "Research Intern, 2023",
+          focus: "Edge inference benchmarking",
+          certificate: "/assets/img/certificates/vikram-singh.svg",
+          links: [{ type: "linkedin", href: "https://www.linkedin.com/" }],
+        },
+        {
+          name: "Meghna Rao",
+          role: "Research Intern, 2022",
+          focus: "Wireless sensing prototypes",
+          certificate: "/assets/img/certificates/meghna-rao.svg",
+        },
       ],
     },
   ],
