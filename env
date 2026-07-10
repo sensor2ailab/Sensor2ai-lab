@@ -1,0 +1,25 @@
+NODE_ENV=development
+APP_BASE_URL=http://localhost:3000
+FRONTEND_ORIGIN=http://localhost:3000
+
+DATABASE_URL=postgresql://postgres.dauowzcxdbyojchteyto:sensor2ailab@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=15
+DIRECT_URL=postgresql://postgres:sensor2ailab@db.dauowzcxdbyojchteyto.supabase.co:5432/postgres
+
+# Supabase Storage
+SUPABASE_URL=https://dauowzcxdbyojchteyto.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhdW93emN4ZGJ5b2pjaHRleXRvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzIzMDIzOSwiZXhwIjoyMDk4ODA2MjM5fQ.mGjAqbCvY-XBQHeEpL2ZFz30pZ4koxrKTn6IOd761mg
+RESUME_BUCKET=resumes
+
+JWT_ACCESS_SECRET=ak7f7wNuhcTsoV1bjBdC0m8hTUe5aNrHIf96MnKnDiMHPuPu52EqgsEYu2as4Bo6
+JWT_REFRESH_SECRET=FWlZWBA0aO_Kmqf5j9UlswiuYiJkMTTgWKYfgbJV0sxcaiRqM-JrlKOJRa2Y8TL7
+ACCESS_TOKEN_TTL=900
+REFRESH_TOKEN_TTL=1209600
+
+# Anti-abuse — placeholder; CAPTCHA verification is bypassed in non-production.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# First admin, read only by `npm run seed:admin` (not required at runtime).
+# Alternatively pass them as CLI args: npm run seed:admin -- <email> <password> [name]
+SEED_ADMIN_EMAIL=sensor2ailab@gmail.com
+SEED_ADMIN_PASSWORD=Iitp@2024Lab
+SEED_ADMIN_NAME=Developer Abhishek
