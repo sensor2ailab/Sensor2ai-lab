@@ -5,14 +5,17 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Award, X } from "lucide-react";
 import { durBase, easeOut } from "@/lib/motion";
+import { useScrollLock } from "@/lib/scroll-lock";
 
 // A "View certificate" action for past interns plus the pop-up image viewer it opens.
-// The lightbox mirrors the shared Modal's conventions — portal, backdrop frost,
-// Escape to close, scroll lock — but is sized for a full certificate image.
+// The lightbox mirrors the shared Modal's conventions therefore portal, backdrop frost,
+// Escape to close, scroll lock therefore but is sized for a full certificate image.
 export function CertificateViewer({ src, name }: { src: string; name: string }) {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
-  const title = `${name} — Internship certificate`;
+  const title = `${name} · Internship certificate`;
+
+  useScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
@@ -20,11 +23,8 @@ export function CertificateViewer({ src, name }: { src: string; name: string }) 
       if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
     };
   }, [open]);
 
@@ -41,7 +41,7 @@ export function CertificateViewer({ src, name }: { src: string; name: string }) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-secondary hover:border-primary hover:text-primary border-border mt-4 inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-[color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+        className="text-secondary hover:border-primary hover:text-primary border-border mt-4 inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-[color,border-color] duration-(--dur-fast) ease-out"
       >
         <Award className="size-4" aria-hidden="true" />
         View certificate
@@ -52,7 +52,7 @@ export function CertificateViewer({ src, name }: { src: string; name: string }) 
             <AnimatePresence>
               {open ? (
                 <m.div
-                  className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
+                  className="fixed inset-0 z-100 flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
                   initial={{ opacity: 1 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -82,7 +82,7 @@ export function CertificateViewer({ src, name }: { src: string; name: string }) 
                         type="button"
                         onClick={() => setOpen(false)}
                         aria-label="Close"
-                        className="text-muted hover:text-foreground hover:bg-surface-2 -mr-1 rounded-md p-1 transition-colors duration-[var(--dur-fast)]"
+                        className="text-muted hover:text-foreground hover:bg-surface-2 -mr-1 rounded-md p-1 transition-colors duration-(--dur-fast)"
                       >
                         <X className="size-5" aria-hidden="true" />
                       </button>

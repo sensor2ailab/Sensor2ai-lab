@@ -70,7 +70,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async (): Promise<string | null> => {
     const res = await fetch(`${API}/auth/refresh`, { method: "POST" });
     if (!res.ok) return null;
-    const body = (await res.json()) as { accessToken: string; user: SessionUser };
+    // Anonymous visitors get a 200 with a null user (no session to restore).
+    const body = (await res.json()) as { accessToken?: string; user: SessionUser | null };
+    if (!body.user || !body.accessToken) return null;
     setSession(body.accessToken, body.user);
     return body.accessToken;
   }, [setSession]);

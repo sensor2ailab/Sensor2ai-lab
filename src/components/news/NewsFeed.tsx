@@ -51,11 +51,11 @@ export function NewsFeed() {
             {item.href ? (
               <Link
                 href={item.href}
-                className="group text-primary hover:text-primary-hover mt-auto inline-flex w-fit items-center gap-1 text-sm font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                className="group text-primary hover:text-primary-hover mt-auto inline-flex w-fit items-center gap-1 text-sm font-medium transition-colors duration-(--dur-fast) ease-out"
               >
                 Read more
                 <ArrowUpRight
-                  className="size-4 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] group-hover:translate-x-0.5"
+                  className="size-4 transition-transform duration-(--dur-fast) ease-out group-hover:translate-x-0.5"
                   aria-hidden="true"
                 />
               </Link>

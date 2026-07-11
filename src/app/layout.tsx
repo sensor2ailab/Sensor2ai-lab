@@ -3,6 +3,7 @@ import { manrope, greatVibes } from "./fonts";
 import "./globals.css";
 import { site } from "@/data/site";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppToaster } from "@/components/ui/Toaster";
 import { HiringBanner } from "@/components/layout/HiringBanner";
@@ -58,8 +59,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${greatVibes.variable}`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${manrope.variable} ${greatVibes.variable}`}
+    >
       <body>
+        {/* Without JS the ScrollReveal observer never runs, so reveal targets would stay
+            hidden — force them visible for no-JS clients and crawlers. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
         <MotionProvider>
           <AuthProvider>
             <a
@@ -68,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             >
               Skip to content
             </a>
+            <ScrollReveal />
             <HiringBanner />
             <Header />
             <main id="main-content">{children}</main>

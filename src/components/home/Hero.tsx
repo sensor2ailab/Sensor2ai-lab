@@ -36,7 +36,7 @@ export function Hero() {
     <section
       aria-roledescription="carousel"
       aria-label="Lab highlights"
-      className="hero-fill bg-accent relative min-h-[calc(100svh-2.75rem)] w-full overflow-hidden transition-[min-height] duration-[var(--dur-base)] ease-[var(--ease-out)] motion-reduce:transition-none"
+      className="hero-fill bg-accent relative min-h-[calc(100svh-2.75rem)] w-full overflow-hidden transition-[min-height] duration-(--dur-base) ease-out motion-reduce:transition-none"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -72,7 +72,7 @@ export function Hero() {
               type="button"
               aria-label="Previous slide"
               onClick={() => go(-1)}
-              className="rounded-pill border-border hover:border-accent hover:text-accent inline-flex size-8 items-center justify-center border transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+              className="rounded-pill border-border hover:border-accent hover:text-accent inline-flex size-8 items-center justify-center border transition-colors duration-(--dur-fast) ease-out"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -83,7 +83,7 @@ export function Hero() {
               type="button"
               aria-label="Next slide"
               onClick={() => go(1)}
-              className="rounded-pill border-border hover:border-accent hover:text-accent inline-flex size-8 items-center justify-center border transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+              className="rounded-pill border-border hover:border-accent hover:text-accent inline-flex size-8 items-center justify-center border transition-colors duration-(--dur-fast) ease-out"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>
@@ -110,7 +110,7 @@ export function Hero() {
           <span className="mt-1 inline-flex items-center gap-1 text-xs font-bold tracking-wide uppercase underline underline-offset-4">
             View profile
             <ArrowRight
-              className="size-3.5 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] group-hover:translate-x-0.5"
+              className="size-3.5 transition-transform duration-(--dur-fast) ease-out group-hover:translate-x-0.5"
               aria-hidden="true"
             />
           </span>

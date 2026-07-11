@@ -33,7 +33,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <h3 className="text-h3 font-semibold">
           <Link
             href={`/projects/${project.slug}`}
-            className="hover:text-primary transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+            className="hover:text-primary transition-colors duration-(--dur-fast) ease-out"
           >
             {project.title}
           </Link>
@@ -51,11 +51,11 @@ export function ProjectCard({ project }: { project: Project }) {
 
       <Link
         href={`/projects/${project.slug}`}
-        className="border-border text-primary hover:text-primary-hover group mt-auto inline-flex items-center gap-1 border-t pt-4 text-sm font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+        className="border-border text-primary hover:text-primary-hover group mt-auto inline-flex items-center gap-1 border-t pt-4 text-sm font-medium transition-colors duration-(--dur-fast) ease-out"
       >
         View project
         <ArrowRight
-          className="size-4 transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5"
+          className="size-4 transition-transform duration-(--dur-fast) group-hover:translate-x-0.5"
           aria-hidden="true"
         />
       </Link>

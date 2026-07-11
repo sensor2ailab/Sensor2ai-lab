@@ -15,6 +15,7 @@ const createSchema = z
     location: z.string().max(200).nullish(),
     employmentType: z.string().max(100).nullish(),
     isOpen: z.boolean().optional(),
+    urgent: z.boolean().optional(),
   })
   .strict();
 

@@ -24,7 +24,7 @@ export function BibtexButton({ bibtex }: { bibtex: string }) {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="rounded-pill border-border text-secondary hover:border-primary hover:text-primary inline-flex w-fit items-center gap-1.5 border px-3 py-1.5 text-xs font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+        className="rounded-pill border-border text-secondary hover:border-primary hover:text-primary inline-flex w-fit items-center gap-1.5 border px-3 py-1.5 text-xs font-medium transition-colors duration-(--dur-fast) ease-out"
       >
         <Quote className="size-3.5" aria-hidden="true" />
         BibTeX
@@ -39,7 +39,7 @@ export function BibtexButton({ bibtex }: { bibtex: string }) {
             type="button"
             onClick={copy}
             aria-label="Copy BibTeX to clipboard"
-            className="border-border bg-background text-secondary hover:border-primary hover:text-primary absolute top-2 right-2 inline-flex items-center gap-1 rounded-sm border px-2 py-1 text-xs transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+            className="border-border bg-background text-secondary hover:border-primary hover:text-primary absolute top-2 right-2 inline-flex items-center gap-1 rounded-sm border px-2 py-1 text-xs transition-colors duration-(--dur-fast) ease-out"
           >
             {copied ? (
               <Check className="size-3.5" aria-hidden="true" />

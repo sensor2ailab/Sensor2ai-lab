@@ -8,6 +8,8 @@ export interface NavItem {
   href: string;
   // Shown in the menu only to signed-in users.
   authOnly?: boolean;
+  // Shown in the menu only to admins.
+  adminOnly?: boolean;
 }
 
 export type LinkType = "profile" | "website" | "scholar" | "linkedin" | "email" | "github";

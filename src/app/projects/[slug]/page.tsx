@@ -15,6 +15,7 @@ import {
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { Badge } from "@/components/ui/Badge";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Reveal } from "@/components/motion/Reveal";
@@ -92,7 +93,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <Container className="flex flex-col gap-6 py-14 sm:py-16">
           <Link
             href="/projects"
-            className="text-secondary hover:text-primary inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+            className="text-secondary hover:text-primary inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors duration-(--dur-fast) ease-out"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             All projects
@@ -111,8 +112,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </span>
             ) : null}
           </div>
-          <h1 className="text-[clamp(2rem,6vw,3.5rem)] text-balance">{project.title}</h1>
-          <p className="text-lead text-secondary max-w-2xl">{project.blurb}</p>
+          <RevealHeading
+            text={project.title}
+            className="text-[clamp(2rem,6vw,3.5rem)] text-balance"
+          />
+          <p data-reveal suppressHydrationWarning className="text-lead text-secondary max-w-2xl">
+            {project.blurb}
+          </p>
         </Container>
       </section>
 

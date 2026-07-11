@@ -2,13 +2,23 @@
 
 import { m, useReducedMotion } from "motion/react";
 import { useState, type FormEvent } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { Field, Input, Textarea } from "@/components/ui/Field";
+import { Combobox } from "@/components/ui/Combobox";
+import { colleges } from "@/data/colleges";
 import { errorFromResponse } from "@/lib/api-error";
 import { durBase, easeOut } from "@/lib/motion";
 import type { Job } from "@/lib/api-types";
+
+// Module-level so the reference is stable across renders (the Combobox debounces on it).
+// Backed by our cached /colleges proxy, which itself falls back to the bundled list.
+async function searchColleges(query: string): Promise<string[]> {
+  const res = await fetch(`/api/v1/colleges?q=${encodeURIComponent(query)}`);
+  if (!res.ok) throw new Error("college lookup failed");
+  return ((await res.json()) as { items: string[] }).items;
+}
 
 interface Props {
   job: Job;
@@ -21,14 +31,20 @@ export function ApplicationForm({ job, onDone }: Props) {
   const reduce = useReducedMotion();
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const [college, setCollege] = useState("");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!college.trim()) {
+      toast.error("Please select or enter your college.");
+      return;
+    }
     const form = new FormData(e.currentTarget);
     const payload = {
       name: String(form.get("name") ?? "").trim(),
       email: String(form.get("email") ?? "").trim(),
       phone: String(form.get("phone") ?? "").trim(),
+      college: college.trim(),
       resumeLink: String(form.get("resumeLink") ?? "").trim(),
       coverLetter: String(form.get("coverLetter") ?? "").trim() || undefined,
     };
@@ -87,6 +103,21 @@ export function ApplicationForm({ job, onDone }: Props) {
         <Input id="app-phone" name="phone" required placeholder="+91 00000 00000" />
       </Field>
       <Field
+        label="College"
+        htmlFor="app-college"
+        required
+        hint="Search the list, or type your college if it isn’t there."
+      >
+        <Combobox
+          id="app-college"
+          value={college}
+          onChange={setCollege}
+          options={colleges}
+          fetchOptions={searchColleges}
+          placeholder="Select or type your college"
+        />
+      </Field>
+      <Field
         label="Resume link"
         htmlFor="app-resume"
         required
@@ -107,8 +138,7 @@ export function ApplicationForm({ job, onDone }: Props) {
         <Button type="button" variant="secondary" size="sm" onClick={onDone}>
           Cancel
         </Button>
-        <Button type="submit" size="sm">
-          {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+        <Button type="submit" size="sm" loading={busy}>
           {busy ? "Submitting" : "Submit application"}
         </Button>
       </div>

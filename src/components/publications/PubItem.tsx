@@ -17,21 +17,21 @@ interface Props {
   isAdmin?: boolean;
   activeTags?: string[];
   onTagToggle?: (tag: string) => void;
-  onAddTag?: (pub: Publication, tag: string) => void;
+  onOpenAddTags?: (pub: Publication) => void;
   onRemoveTag?: (pub: Publication, tag: string) => void;
   onEdit?: (pub: Publication) => void;
   onDelete?: (pub: Publication) => void;
 }
 
 const pillBase =
-  "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]";
+  "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-medium transition-colors duration-(--dur-fast) ease-out";
 
 export function PubItem({
   pub,
   isAdmin,
   activeTags,
   onTagToggle,
-  onAddTag,
+  onOpenAddTags,
   onRemoveTag,
   onEdit,
   onDelete,
@@ -49,7 +49,7 @@ export function PubItem({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary inline-flex items-start gap-1 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+            className="hover:text-primary inline-flex items-start gap-1 transition-colors duration-(--dur-fast) ease-out"
           >
             {pub.title}
             <ArrowUpRight className="mt-1 size-4 shrink-0" aria-hidden="true" />
@@ -78,8 +78,18 @@ export function PubItem({
           />
         ))}
 
-        {isAdmin && onAddTag ? (
-          <AddTag existing={pub.tags} onAdd={(tag) => onAddTag(pub, tag)} />
+        {isAdmin && onOpenAddTags ? (
+          <button
+            type="button"
+            onClick={() => onOpenAddTags(pub)}
+            className={cn(
+              pillBase,
+              "bg-primary text-on-primary hover:bg-primary-hover cursor-pointer",
+            )}
+          >
+            <Plus className="size-3" aria-hidden="true" />
+            Add tags
+          </button>
         ) : null}
       </div>
 
@@ -113,12 +123,14 @@ function Pop({
   containerRef,
   onClose,
   label,
+  align = "left",
   className,
   children,
 }: {
   containerRef: RefObject<HTMLElement | null>;
   onClose: () => void;
   label: string;
+  align?: "left" | "right";
   className?: string;
   children: ReactNode;
 }) {
@@ -148,7 +160,8 @@ function Pop({
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -4 }}
       transition={{ duration: reduce ? 0 : durBase, ease: easeOut }}
       className={cn(
-        "border-border bg-background shadow-lift absolute top-full left-0 z-30 mt-2 origin-top-left rounded-md border p-3",
+        "border-border bg-background shadow-lift absolute top-full z-30 mt-2 rounded-md border p-3",
+        align === "right" ? "right-0 origin-top-right" : "left-0 origin-top-left",
         className,
       )}
     >
@@ -182,7 +195,7 @@ function TagPill({
         // At rest, tags read like the neutral type badge; as a filter they take the
         // accent, matching the filter-row chips.
         active
-          ? "bg-accent text-on-primary"
+          ? "bg-primary text-on-primary"
           : "bg-surface-2 text-secondary hover:bg-primary-soft hover:text-primary-hover",
       )}
     >
@@ -202,7 +215,7 @@ function TagPill({
             onClick={() => setConfirming(true)}
             aria-label={`Remove tag ${tag}`}
             className={cn(
-              "-mr-0.5 grid size-4 place-items-center rounded-full transition-colors duration-[var(--dur-fast)]",
+              "-mr-0.5 grid size-4 place-items-center rounded-full transition-colors duration-(--dur-fast)",
               active
                 ? "text-on-primary/70 hover:text-on-primary hover:bg-on-primary/20"
                 : "text-muted hover:text-foreground hover:bg-foreground/10",
@@ -225,7 +238,7 @@ function TagPill({
                   <button
                     type="button"
                     onClick={() => setConfirming(false)}
-                    className="text-secondary hover:text-foreground rounded-md px-2.5 py-1 text-xs font-medium transition-colors duration-[var(--dur-fast)]"
+                    className="text-secondary hover:text-foreground rounded-md px-2.5 py-1 text-xs font-medium transition-colors duration-(--dur-fast)"
                   >
                     Cancel
                   </button>
@@ -235,7 +248,7 @@ function TagPill({
                       onRemove();
                       setConfirming(false);
                     }}
-                    className="bg-danger text-on-primary rounded-md px-2.5 py-1 text-xs font-medium transition-opacity duration-[var(--dur-fast)] hover:opacity-90"
+                    className="bg-danger text-on-primary rounded-md px-2.5 py-1 text-xs font-medium transition-opacity duration-(--dur-fast) hover:opacity-90"
                   >
                     Remove
                   </button>
@@ -245,83 +258,6 @@ function TagPill({
           </AnimatePresence>
         </span>
       ) : null}
-    </span>
-  );
-}
-
-// Filled "Add tag" button that pops a small input panel. Commits on Enter or Add,
-// ignores blanks and case-insensitive duplicates, and dismisses on Escape/outside.
-function AddTag({ existing, onAdd }: { existing: string[]; onAdd: (tag: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
-  const wrapRef = useRef<HTMLSpanElement>(null);
-
-  function close() {
-    setValue("");
-    setOpen(false);
-  }
-
-  function commit() {
-    const tag = value.trim();
-    if (tag && !existing.some((t) => t.toLowerCase() === tag.toLowerCase())) {
-      onAdd(tag);
-    }
-    close();
-  }
-
-  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      commit();
-    }
-  }
-
-  return (
-    <span ref={wrapRef} className="relative inline-flex">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-expanded={open}
-        className={cn(
-          pillBase,
-          "bg-primary text-on-primary hover:bg-primary-hover cursor-pointer",
-        )}
-      >
-        <Plus className="size-3" aria-hidden="true" />
-        Add tag
-      </button>
-      <AnimatePresence>
-        {open ? (
-          <Pop containerRef={wrapRef} onClose={close} label="Add tag" className="w-60">
-            <input
-              autoFocus
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyDown={onKeyDown}
-              maxLength={40}
-              placeholder="e.g. edge-ml"
-              aria-label="New tag"
-              className="border-border bg-background text-foreground placeholder:text-muted focus:border-primary focus:ring-primary/25 w-full rounded-md border px-2.5 py-1.5 text-sm transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:ring-2 focus:outline-none"
-            />
-            <div className="mt-3 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={close}
-                className="text-secondary hover:text-foreground rounded-md px-2.5 py-1 text-xs font-medium transition-colors duration-[var(--dur-fast)]"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={commit}
-                className="bg-primary text-on-primary hover:bg-primary-hover rounded-md px-2.5 py-1 text-xs font-medium transition-colors duration-[var(--dur-fast)]"
-              >
-                Add
-              </button>
-            </div>
-          </Pop>
-        ) : null}
-      </AnimatePresence>
     </span>
   );
 }

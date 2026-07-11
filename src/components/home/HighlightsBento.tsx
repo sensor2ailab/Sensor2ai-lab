@@ -61,7 +61,7 @@ const EMPTY_CELLS = [
 // Grid lines come from each cell's right/bottom border plus the top/bottom on the grid.
 // Every cell shares the same hover wash; only the filled cells are links (pointer).
 const CELL =
-  "border-border border-r border-b transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)] hover:bg-surface";
+  "border-border border-r border-b transition-colors duration-(--dur-fast) ease-out hover:bg-surface";
 
 export function HighlightsBento({ eyebrow, title, items }: HighlightsBentoProps) {
   const cells = items.slice(0, HIGHLIGHT_CELLS.length);
@@ -69,7 +69,7 @@ export function HighlightsBento({ eyebrow, title, items }: HighlightsBentoProps)
   return (
     <Section tone="default">
       {/* Full-bleed grid: side cells sit at the screen edges like the reference. */}
-      <Reveal className="border-border grid grid-cols-2 border-y lg:min-h-[36rem] lg:grid-cols-6 lg:grid-rows-4">
+      <Reveal className="border-border grid grid-cols-2 border-y lg:min-h-144 lg:grid-cols-6 lg:grid-rows-4">
         <div className="border-border col-span-2 flex flex-col items-center justify-center gap-4 border-r border-b p-8 text-center lg:col-start-2 lg:col-end-6 lg:row-start-2 lg:row-end-4">
           <span className="text-muted text-xs font-semibold tracking-[0.22em] uppercase">
             {eyebrow}
@@ -88,7 +88,7 @@ export function HighlightsBento({ eyebrow, title, items }: HighlightsBentoProps)
               className={`${CELL} group relative flex min-h-36 cursor-pointer items-center justify-center p-4 text-center ${HIGHLIGHT_CELLS[i]}`}
             >
               {/* Resting state: icon and venue. */}
-              <span className="flex flex-col items-center gap-3 transition-opacity duration-[var(--dur-base)] ease-[var(--ease-out)] group-hover:opacity-0">
+              <span className="flex flex-col items-center gap-3 transition-opacity duration-(--dur-base) ease-out group-hover:opacity-0">
                 <span className="bg-foreground text-background inline-flex size-11 items-center justify-center rounded-full">
                   <Icon className="size-5" aria-hidden="true" />
                 </span>
@@ -98,7 +98,7 @@ export function HighlightsBento({ eyebrow, title, items }: HighlightsBentoProps)
               </span>
 
               {/* Hover state: the full highlight plus a read-more affordance. */}
-              <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 opacity-0 transition-opacity duration-[var(--dur-base)] ease-[var(--ease-out)] group-hover:opacity-100">
+              <span className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 opacity-0 transition-opacity duration-(--dur-base) ease-out group-hover:opacity-100">
                 <span className="text-foreground line-clamp-3 text-sm font-medium text-balance">
                   {item.title}
                 </span>

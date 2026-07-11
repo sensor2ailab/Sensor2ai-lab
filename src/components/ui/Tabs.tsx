@@ -46,7 +46,7 @@ export function Tabs({ items }: { items: TabItem[] }) {
               onClick={() => setActive(item.id)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cn(
-                "relative px-4 py-3 text-sm font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]",
+                "relative px-4 py-3 text-sm font-medium transition-colors duration-(--dur-fast) ease-out",
                 selected ? "text-primary" : "text-secondary hover:text-foreground",
               )}
             >
@@ -54,7 +54,7 @@ export function Tabs({ items }: { items: TabItem[] }) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  "bg-accent absolute inset-x-0 -bottom-px h-0.5 origin-left transition-transform duration-[var(--dur-base)] ease-[var(--ease-out)]",
+                  "bg-accent absolute inset-x-0 -bottom-px h-0.5 origin-left transition-transform duration-(--dur-base) ease-out",
                   selected ? "scale-x-100" : "scale-x-0",
                 )}
               />

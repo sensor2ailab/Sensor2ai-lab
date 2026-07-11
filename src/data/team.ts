@@ -130,13 +130,20 @@ export const team: TeamData = {
           role: "Research Intern, 2023",
           focus: "Edge inference benchmarking",
           certificate: "/assets/img/certificates/vikram-singh.svg",
-          links: [{ type: "linkedin", href: "https://www.linkedin.com/" }],
+          links: [
+            { type: "linkedin", href: "https://www.linkedin.com/" },
+            { type: "scholar", href: "https://scholar.google.com/" },
+          ],
         },
         {
           name: "Meghna Rao",
           role: "Research Intern, 2022",
           focus: "Wireless sensing prototypes",
           certificate: "/assets/img/certificates/meghna-rao.svg",
+          links: [
+            { type: "linkedin", href: "https://www.linkedin.com/" },
+            { type: "github", href: "https://github.com/" },
+          ],
         },
       ],
     },

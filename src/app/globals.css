@@ -260,57 +260,130 @@ body:has(.hiring-banner[data-dismissed]) .hero-fill {
   }
 }
 
-/* Thin, theme-aware scrollbar: a quiet grey rail that warms to the orange accent
-   on hover. Firefox uses the standard properties; WebKit/Blink use the pseudos. */
-html {
+/* Modern, theme-aware scrollbar everywhere: a quiet grey pill floating in a
+   transparent rail that warms to the brand orange on hover. Firefox uses the standard
+   properties; WebKit/Blink use the pseudos. The arrow buttons and corner are removed
+   so the bar reads as a single clean track. */
+html,
+* {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklab, var(--color-foreground) 28%, transparent) transparent;
+  scrollbar-color: color-mix(in oklab, var(--color-primary) 34%, transparent)
+    color-mix(in oklab, var(--color-primary) 7%, transparent);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: color-mix(in oklab, var(--color-foreground) 28%, transparent);
-  border-radius: var(--r-pill);
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-primary);
-}
-
-/* Opt-in thin scrollbar for inner scroll areas (modals, panels), matching the page
-   scrollbar so nested overflow never shows a chunky default bar. */
-.thin-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklab, var(--color-foreground) 28%, transparent) transparent;
-}
-
-.thin-scroll::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.thin-scroll::-webkit-scrollbar-track {
-  background: transparent;
+/* A whisper of warm brand tint so the rail reads as part of the theme, not a bare gap. */
+::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--color-primary) 7%, transparent);
 }
 
-.thin-scroll::-webkit-scrollbar-thumb {
-  background-color: color-mix(in oklab, var(--color-foreground) 28%, transparent);
+/* 2px transparent border (clipped to the padding box) insets the thumb, so it floats
+   as a slim ~4px pill rather than filling the rail edge to edge. Tinted from the brand
+   orange so it belongs to the warm theme instead of reading as a cold grey bar. */
+::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--color-primary) 32%, transparent);
   border-radius: var(--r-pill);
   border: 2px solid transparent;
   background-clip: padding-box;
+  transition: background-color var(--dur-fast) ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--color-primary) 55%, transparent);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-primary);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Opt-in slimmer scrollbar for inner scroll areas (modals, panels, chat), matching the
+   page scrollbar so nested overflow never shows a chunky default bar. */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-primary) 34%, transparent)
+    color-mix(in oklab, var(--color-primary) 7%, transparent);
+}
+
+.thin-scroll::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--color-primary) 7%, transparent);
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--color-primary) 32%, transparent);
+  border-radius: var(--r-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.thin-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Chat canvas: a restrained, modern take on WhatsApp's patterned backdrop therefore two
+   interlocking lattices of thin circles (a large outlined ring plus a small accented
+   one) over a soft gradient wash. Built from tokens so it adapts to the theme, and
+   kept low-contrast so it never competes with the message bubbles. */
+.chat-surface {
+  background-color: var(--color-surface);
+  background-image:
+    /* large outlined rings */
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 0 13px,
+      color-mix(in oklab, var(--color-foreground) 6%, transparent) 13px 14px,
+      transparent 14px
+    ),
+    /* small brand-tinted rings, offset into the gaps */
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 0 5px,
+      color-mix(in oklab, var(--color-primary) 12%, transparent) 5px 6px,
+      transparent 6px
+    ),
+    /* soft wash from the top */
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-primary) 5%, transparent),
+      transparent 55%
+    );
+  background-size:
+    64px 64px,
+    64px 64px,
+    100% 100%;
+  background-position:
+    0 0,
+    32px 32px,
+    0 0;
+  background-attachment: local, local, local;
 }
 
 .thin-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--color-primary) 55%, transparent);
+}
+
+.thin-scroll::-webkit-scrollbar-thumb:active {
   background-color: var(--color-primary);
 }
 
@@ -376,5 +449,51 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after {
     animation: none;
+  }
+}
+
+/* Scroll reveal. One shared IntersectionObserver (see ScrollReveal) toggles `is-in`
+   as elements enter/leave the viewport, so they ease in on the way down and replay on
+   the way back up. Transform + opacity only, so the compositor does the work and there
+   is no scroll-linked layout/paint. The whole system lives inside the no-preference
+   query, so reduced-motion users just get the final, fully visible state with no JS
+   flashing (the observer also no-ops for them).
+
+   Tag any element with `data-reveal` (optionally `="left" | "right" | "scale" | "fade"`)
+   and stagger with `style={{ "--reveal-delay": "0.06s" }}`. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity var(--dur-slow) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+
+  [data-reveal="left"] {
+    transform: translateX(-26px);
+  }
+
+  [data-reveal="right"] {
+    transform: translateX(26px);
+  }
+
+  [data-reveal="scale"] {
+    transform: scale(0.94);
+  }
+
+  [data-reveal="fade"] {
+    transform: none;
+  }
+
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Per-word split for headings: inline-block so each word can translate. */
+  .reveal-word {
+    display: inline-block;
   }
 }

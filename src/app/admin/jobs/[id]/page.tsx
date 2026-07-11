@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, m } from "motion/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,6 +21,7 @@ import { Section } from "@/components/ui/Section";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { FormMessage } from "@/components/ui/Field";
+import { RevealHeading } from "@/components/ui/RevealHeading";
 import { formatDate } from "@/lib/format";
 import { mailtoHref, type MailDraft } from "@/lib/mailto";
 import type { Application, ApplicationStatus, Job } from "@/lib/api-types";
@@ -180,10 +182,15 @@ export default function JobReviewPage() {
         setDialogError(b?.error?.message ?? "Approval failed");
         return;
       }
+      const { id: approvedId, name } = approveTarget;
       setApproveTarget(null);
       setApproveDraft(null);
-      toast.success(`${approveTarget.name} approved`);
-      reload();
+      toast.success(`${name} approved`);
+      // Patch in place instead of a full refetch, so the row transitions smoothly
+      // (updates its status, or animates out of a filtered view) with no skeleton flash.
+      setApps((prev) =>
+        prev.map((a) => (a.id === approvedId ? { ...a, status: "approved" as const } : a)),
+      );
     } catch {
       setDialogError("Network error, please try again");
     } finally {
@@ -204,10 +211,12 @@ export default function JobReviewPage() {
         setDialogError(b?.error?.message ?? "Reject failed");
         return;
       }
-      const name = rejectTarget.name;
+      const { id: rejectedId, name } = rejectTarget;
       setRejectTarget(null);
       toast.success(`${name}'s application rejected`);
-      reload();
+      setApps((prev) =>
+        prev.map((a) => (a.id === rejectedId ? { ...a, status: "rejected" as const } : a)),
+      );
     } catch {
       setDialogError("Network error, please try again");
     } finally {
@@ -237,16 +246,24 @@ export default function JobReviewPage() {
           <button
             type="button"
             onClick={() => router.push("/join")}
-            className="text-muted hover:text-primary inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors duration-[var(--dur-fast)]"
+            className="text-muted hover:text-primary inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors duration-(--dur-fast)"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             Back to positions
           </button>
           <div className="flex flex-col gap-1">
-            <span className="text-primary text-xs font-semibold tracking-[0.2em] uppercase">
+            <span
+              data-reveal
+              suppressHydrationWarning
+              className="text-primary text-xs font-semibold tracking-[0.2em] uppercase"
+            >
               Applications
             </span>
-            <h1 className="text-[clamp(1.5rem,4vw,2.25rem)]">{job?.title ?? "Position"}</h1>
+            <RevealHeading
+              key={job?.title ?? "Position"}
+              text={job?.title ?? "Position"}
+              className="text-[clamp(1.5rem,4vw,2.25rem)]"
+            />
           </div>
         </div>
 
@@ -257,7 +274,7 @@ export default function JobReviewPage() {
               key={f.key}
               type="button"
               onClick={() => setFilter(f.key)}
-              className={`rounded-pill inline-flex items-center gap-2 border px-3.5 py-1.5 text-sm font-medium transition-colors duration-[var(--dur-fast)] ${
+              className={`rounded-pill inline-flex items-center gap-2 border px-3.5 py-1.5 text-sm font-medium transition-colors duration-(--dur-fast) ${
                 filter === f.key
                   ? "border-primary bg-primary text-on-primary"
                   : "border-border text-secondary hover:border-primary hover:text-primary"
@@ -290,7 +307,7 @@ export default function JobReviewPage() {
           </div>
         ) : (
           <div className="border-border overflow-x-auto rounded-lg border">
-            <table className="w-full min-w-[720px] border-collapse text-sm">
+            <table className="w-full min-w-180 border-collapse text-sm">
               <thead>
                 <tr className="border-border bg-surface-2/60 border-b text-left">
                   <th className="p-3 font-semibold">
@@ -320,8 +337,17 @@ export default function JobReviewPage() {
                 </tr>
               </thead>
               <tbody>
+                <AnimatePresence initial={false}>
                 {visible.map((a) => (
-                  <tr key={a.id} className="border-border/70 border-b last:border-0">
+                  <m.tr
+                    key={a.id}
+                    layout="position"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, x: 24 }}
+                    transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
+                    className="border-border/70 border-b last:border-0"
+                  >
                     <td className="p-3 align-top">
                       <div className="text-foreground font-medium">{a.name}</div>
                       {a.coverLetter ? (
@@ -333,6 +359,7 @@ export default function JobReviewPage() {
                     <td className="text-secondary p-3 align-top">
                       <div>{a.email}</div>
                       <div className="text-muted">{a.phone}</div>
+                      {a.college ? <div className="text-muted">{a.college}</div> : null}
                     </td>
                     <td className="p-3 align-top">
                       <a
@@ -375,8 +402,9 @@ export default function JobReviewPage() {
                         <span className="text-muted text-xs">Reviewed</span>
                       )}
                     </td>
-                  </tr>
+                  </m.tr>
                 ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
@@ -422,7 +450,7 @@ export default function JobReviewPage() {
                 <a
                   href={mailtoHref(approveDraft.mailDraft)}
                   onClick={() => setDraftSent(true)}
-                  className="border-border bg-background text-foreground hover:border-primary hover:text-primary rounded-pill inline-flex h-9 items-center gap-2 border px-4 text-sm font-medium transition-colors duration-[var(--dur-fast)]"
+                  className="border-border bg-background text-foreground hover:border-primary hover:text-primary rounded-pill inline-flex h-9 items-center gap-2 border px-4 text-sm font-medium transition-colors duration-(--dur-fast)"
                 >
                   <Mail className="size-4" aria-hidden="true" />
                   Open email draft
@@ -451,12 +479,8 @@ export default function JobReviewPage() {
                   <ArrowLeft className="size-4" aria-hidden="true" />
                   Back
                 </Button>
-                <Button size="sm" onClick={() => void confirmApprove()}>
-                  {dialogBusy ? (
-                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Check className="size-4" aria-hidden="true" />
-                  )}
+                <Button size="sm" onClick={() => void confirmApprove()} loading={dialogBusy}>
+                  {dialogBusy ? null : <Check className="size-4" aria-hidden="true" />}
                   Approve
                 </Button>
               </div>
@@ -485,8 +509,8 @@ export default function JobReviewPage() {
               size="sm"
               className="bg-danger hover:bg-danger text-on-primary"
               onClick={() => void confirmReject()}
+              loading={dialogBusy}
             >
-              {dialogBusy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
               Reject
             </Button>
           </div>

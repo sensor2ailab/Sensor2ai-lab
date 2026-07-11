@@ -15,6 +15,7 @@ const patchSchema = z
     location: z.string().max(200).nullable().optional(),
     employmentType: z.string().max(100).nullable().optional(),
     isOpen: z.boolean().optional(),
+    urgent: z.boolean().optional(),
   })
   .strict();
 

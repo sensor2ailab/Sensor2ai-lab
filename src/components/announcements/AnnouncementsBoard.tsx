@@ -205,7 +205,7 @@ export function AnnouncementsBoard() {
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`text-primary hover:text-primary-hover inline-flex w-fit items-center gap-1 text-sm font-medium transition-colors duration-[var(--dur-fast)] ${isAdmin ? "" : "mt-auto"}`}
+                    className={`text-primary hover:text-primary-hover inline-flex w-fit items-center gap-1 text-sm font-medium transition-colors duration-(--dur-fast) ${isAdmin ? "" : "mt-auto"}`}
                   >
                     Meeting Link
                     <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -267,10 +267,9 @@ export function AnnouncementsBoard() {
               size="sm"
               className="bg-danger hover:bg-danger text-on-primary"
               onClick={() => void remove()}
+              loading={pendingId === confirmDelete?.id}
             >
-              {pendingId === confirmDelete?.id ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              ) : (
+              {pendingId === confirmDelete?.id ? null : (
                 <Trash2 className="size-4" aria-hidden="true" />
               )}
               Delete

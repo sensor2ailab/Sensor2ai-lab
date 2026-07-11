@@ -29,7 +29,9 @@ function facilityIcon(facility: string): LucideIcon {
 }
 
 // One word of the scroll-revealed statement: it lifts from faint to solid as the
-// paragraph passes through its slice of the scroll range.
+// paragraph passes through its slice of the scroll range. The faint floor is 0.65
+// (not 0.5) so even un-revealed words keep a 4.5:1 contrast ratio therefore, the effect still
+// reads clearly, but the text is never inaccessible.
 function Word({
   children,
   progress,
@@ -39,7 +41,7 @@ function Word({
   progress: MotionValue<number>;
   range: [number, number];
 }) {
-  const opacity = useTransform(progress, range, [0.5, 1]);
+  const opacity = useTransform(progress, range, [0.65, 1]);
   return <m.span style={{ opacity }}>{children} </m.span>;
 }
 
@@ -92,7 +94,7 @@ export function AboutSection() {
               return (
                 <StaggerItem
                   key={facility}
-                  className="border-border bg-background hover:bg-surface-2 flex items-center gap-4 border-r border-b p-6 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                  className="border-border bg-background hover:bg-surface-2 flex items-center gap-4 border-r border-b p-6 transition-colors duration-(--dur-fast) ease-out"
                 >
                   <span className="bg-primary-soft text-primary inline-flex size-11 shrink-0 items-center justify-center rounded-md">
                     <Icon className="size-5" aria-hidden="true" />

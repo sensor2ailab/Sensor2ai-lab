@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -101,8 +100,7 @@ export function AnnouncementForm({ editing, onSaved, onCancel }: Props) {
         <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" size="sm">
-          {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+        <Button type="submit" size="sm" loading={busy}>
           {editing ? "Save changes" : "Publish announcement"}
         </Button>
       </div>

@@ -8,7 +8,6 @@ import { AnnouncementsBoard } from "@/components/announcements/AnnouncementsBoar
 export const metadata: Metadata = {
   title: "Announcements",
   description: `Official announcements, calls, and notices from the ${site.name}.`,
-  alternates: { canonical: "/announcements" },
 };
 
 export default function AnnouncementsPage() {

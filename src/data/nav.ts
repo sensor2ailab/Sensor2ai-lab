@@ -7,5 +7,7 @@ export const navItems: NavItem[] = [
   { label: "Projects", href: "/projects" },
   { label: "News", href: "/news" },
   { label: "Announcements", href: "/announcements", authOnly: true },
+  { label: "Inbox", href: "/inbox", authOnly: true },
+  { label: "Hired", href: "/admin/hired", adminOnly: true },
   { label: "Join Us", href: "/join" },
 ];

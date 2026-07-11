@@ -2,6 +2,15 @@ import type { Announcement } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 import { Errors } from "@/server/http/errors";
 import { cursorArgs, toPage, type Page } from "@/server/http/pagination";
+import { notifyAllHired } from "@/server/hires/service";
+import { broadcastInbox } from "@/server/realtime/broadcast";
+
+// When an announcement goes live, drop a notification into every hired member's inbox
+// and ping the realtime inbox channel so their header bell updates immediately.
+async function announceToHired(title: string, createdBy: string | null): Promise<void> {
+  const count = await notifyAllHired(`New announcement: ${title}`, createdBy);
+  if (count > 0) await broadcastInbox();
+}
 
 export interface CreateAnnouncementInput {
   title: string;
@@ -17,7 +26,7 @@ export async function createAnnouncement(
   createdBy: string,
 ): Promise<Announcement> {
   const published = input.published ?? false;
-  return prisma.announcement.create({
+  const announcement = await prisma.announcement.create({
     data: {
       title: input.title,
       body: input.body,
@@ -27,6 +36,8 @@ export async function createAnnouncement(
       createdBy,
     },
   });
+  if (published) await announceToHired(announcement.title, createdBy);
+  return announcement;
 }
 
 export interface UpdateAnnouncementInput {
@@ -48,11 +59,15 @@ export async function updateAnnouncement(
     ...(patch.body !== undefined ? { body: patch.body } : {}),
     ...(patch.link !== undefined ? { link: patch.link } : {}),
   };
+  let nowPublishing = false;
   if (patch.published !== undefined && patch.published !== current.published) {
     data.published = patch.published;
     data.publishedAt = patch.published ? new Date() : null;
+    nowPublishing = patch.published;
   }
-  return prisma.announcement.update({ where: { id }, data });
+  const updated = await prisma.announcement.update({ where: { id }, data });
+  if (nowPublishing) await announceToHired(updated.title, current.createdBy);
+  return updated;
 }
 
 export async function deleteAnnouncement(id: string): Promise<void> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -204,12 +204,14 @@ export function PublicationForm({ editing, onSaved, onCancel }: Props) {
             />
           </Field>
           <div>
-            <Button type="button" variant="secondary" size="sm" onClick={() => void runPreview()}>
-              {previewing ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              ) : (
-                <Sparkles className="size-4" aria-hidden="true" />
-              )}
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => void runPreview()}
+              loading={previewing}
+            >
+              {previewing ? null : <Sparkles className="size-4" aria-hidden="true" />}
               Preview
             </Button>
           </div>
@@ -244,8 +246,7 @@ export function PublicationForm({ editing, onSaved, onCancel }: Props) {
         <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" size="sm">
-          {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+        <Button type="submit" size="sm" loading={busy}>
           {editing ? "Save changes" : "Add publication"}
         </Button>
       </div>

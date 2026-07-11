@@ -4,15 +4,12 @@ import { Fragment } from "react";
 import { m, useReducedMotion, type Variants } from "motion/react";
 import { easeOut } from "@/lib/motion";
 
-// Each letter lifts and fades in, staggered by its position, when the heading
-// scrolls into view. One IntersectionObserver on the wrapper drives the whole
-// thing; letters animate transform/opacity only, so it stays cheap.
+// Each letter slides up into place from behind a clip
 const letter: Variants = {
-  hidden: { opacity: 0, y: "0.5em" },
+  hidden: { y: "115%" },
   show: (i: number) => ({
-    opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: easeOut, delay: i * 0.03 },
+    transition: { duration: 0.5, ease: easeOut, delay: i * 0.03 },
   }),
 };
 
@@ -26,27 +23,36 @@ export function LetterReveal({ text, className }: { text: string; className?: st
   return (
     <m.span
       className={className}
-      aria-label={text}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "0px 0px -80px 0px" }}
     >
-      {words.map((word, wi) => (
-        <Fragment key={wi}>
-          {/* Keep each word unbreakable so letters never wrap mid-word. */}
-          <span aria-hidden="true" className="inline-block whitespace-nowrap">
-            {Array.from(word).map((char) => {
-              const i = index++;
-              return (
-                <m.span key={i} className="inline-block" variants={letter} custom={i}>
-                  {char}
-                </m.span>
-              );
-            })}
-          </span>
-          {wi < words.length - 1 ? " " : null}
-        </Fragment>
-      ))}
+      {/* Real text for assistive tech; the animated glyphs below are decorative. */}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {words.map((word, wi) => (
+          <Fragment key={wi}>
+            {/* Per-word clip so letters reveal from below; padding keeps descenders
+                from being shaved at rest. Negative margin cancels that padding in flow. */}
+            <span className="mb-[-0.14em] inline-flex overflow-hidden pb-[0.14em] align-bottom">
+              {Array.from(word).map((char) => {
+                const i = index++;
+                return (
+                  <m.span
+                    key={i}
+                    className="inline-block will-change-transform"
+                    variants={letter}
+                    custom={i}
+                  >
+                    {char}
+                  </m.span>
+                );
+              })}
+            </span>
+            {wi < words.length - 1 ? " " : null}
+          </Fragment>
+        ))}
+      </span>
     </m.span>
   );
 }

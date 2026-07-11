@@ -43,7 +43,7 @@ export function IconButton({
         aria-label={label}
         disabled={disabled || busy}
         className={cn(
-          "rounded-pill inline-flex size-10 items-center justify-center transition-[background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-out)] focus-visible:outline-none disabled:opacity-60",
+          "rounded-pill inline-flex size-10 items-center justify-center transition-[background-color,color,border-color] duration-(--dur-fast) ease-out focus-visible:outline-none disabled:opacity-60",
           variants[variant],
           className,
         )}
@@ -52,7 +52,7 @@ export function IconButton({
       </button>
       <span
         aria-hidden="true"
-        className="bg-ink text-on-ink shadow-card pointer-events-none absolute bottom-[calc(100%+0.5rem)] left-1/2 z-20 -translate-x-1/2 scale-95 rounded-md px-2 py-1 text-xs font-medium whitespace-nowrap opacity-0 transition-[opacity,transform] duration-[var(--dur-fast)] ease-[var(--ease-out)] group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100"
+        className="bg-ink text-on-ink shadow-card pointer-events-none absolute bottom-[calc(100%+0.5rem)] left-1/2 z-20 -translate-x-1/2 scale-95 rounded-md px-2 py-1 text-xs font-medium whitespace-nowrap opacity-0 transition-[opacity,transform] duration-(--dur-fast) ease-out group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100"
       >
         {label}
       </span>

@@ -7,6 +7,7 @@ export interface ApplicationDto {
   name: string;
   email: string;
   phone: string;
+  college: string | null;
   resumeLink: string;
   coverLetter: string | null;
   status: "pending" | "approved" | "rejected" | "withdrawn";
@@ -21,6 +22,7 @@ export function toApplicationDto(app: Application): ApplicationDto {
     name: app.name,
     email: app.email,
     phone: app.phone,
+    college: app.college,
     resumeLink: app.resumeLink,
     coverLetter: app.coverLetter,
     status: app.status,

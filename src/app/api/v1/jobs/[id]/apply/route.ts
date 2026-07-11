@@ -14,6 +14,7 @@ const bodySchema = z
     name: z.string().min(1).max(200),
     email: z.string().email(),
     phone: z.string().min(1).max(40),
+    college: z.string().trim().min(1).max(200).optional(),
     coverLetter: z.string().max(5000).optional(),
     // A shareable resume link (e.g. Google Drive with view access).
     resumeLink: z.string().url().max(2000),

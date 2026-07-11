@@ -32,7 +32,7 @@ export function PersonCard({ person }: { person: Person }) {
       <div className={cn("relative mb-6", featured ? "size-40" : "size-32")}>
         {/* Orange frame revealed as the photo shrinks. */}
         <span aria-hidden="true" className="bg-accent absolute inset-0 rounded-full" />
-        <div className="absolute inset-0 overflow-hidden rounded-full transition-[transform,box-shadow] duration-[var(--dur-slow)] ease-[var(--ease-out)] group-focus-within:scale-[0.72] group-focus-within:[box-shadow:0_0_0_14px_var(--color-surface)] group-hover:scale-[0.72] group-hover:[box-shadow:0_0_0_14px_var(--color-surface)]">
+        <div className="absolute inset-0 overflow-hidden rounded-full transition-[transform,box-shadow] duration-(--dur-slow) ease-out group-focus-within:scale-[0.72] group-focus-within:[box-shadow:0_0_0_14px_var(--color-surface)] group-hover:scale-[0.72] group-hover:[box-shadow:0_0_0_14px_var(--color-surface)]">
           {person.image ? (
             <Image
               src={person.image}
@@ -61,7 +61,7 @@ export function PersonCard({ person }: { person: Person }) {
       ) : null}
 
       {person.links?.length ? (
-        <ul className="bg-accent absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center transition-transform duration-[var(--dur-base)] ease-[var(--ease-out)] group-focus-within:translate-y-0 group-hover:translate-y-0">
+        <ul className="bg-accent absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center transition-transform duration-(--dur-base) ease-out group-focus-within:translate-y-0 group-hover:translate-y-0">
           {person.links.map((link) => {
             const meta = linkMeta[link.type];
             const Icon = meta.icon;
@@ -73,7 +73,7 @@ export function PersonCard({ person }: { person: Person }) {
                   aria-label={`${meta.label} of ${person.name}`}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
-                  className="text-on-primary hover:bg-surface hover:text-primary flex size-11 items-center justify-center transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                  className="text-on-primary hover:bg-surface hover:text-primary flex size-11 items-center justify-center transition-colors duration-(--dur-fast) ease-out"
                 >
                   <Icon className="size-4" aria-hidden="true" />
                 </Link>

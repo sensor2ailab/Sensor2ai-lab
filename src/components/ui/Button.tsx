@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -6,7 +7,7 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "sm" | "md";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-pill font-medium transition-[transform,background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-out)] focus-visible:outline-none active:translate-y-px disabled:pointer-events-none disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 rounded-pill font-medium transition-[transform,background-color,color,border-color] duration-(--dur-fast) ease-out focus-visible:outline-none active:translate-y-px disabled:pointer-events-none disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-on-primary hover:bg-primary-hover",
@@ -33,6 +34,7 @@ interface LinkProps extends CommonProps {
   type?: never;
   onClick?: never;
   disabled?: never;
+  loading?: never;
 }
 
 interface NativeButtonProps extends CommonProps {
@@ -40,6 +42,9 @@ interface NativeButtonProps extends CommonProps {
   type?: "button" | "submit";
   onClick?: () => void;
   disabled?: boolean;
+  // While true the button is disabled and shows a leading spinner, so an in-flight
+  // action cannot be triggered twice. Prefer this over a manual `disabled={busy}`.
+  loading?: boolean;
 }
 
 type ButtonProps = LinkProps | NativeButtonProps;
@@ -66,9 +71,11 @@ export function Button(props: ButtonProps) {
     <button
       type={props.type ?? "button"}
       onClick={props.onClick}
-      disabled={props.disabled}
+      disabled={props.disabled || props.loading}
+      aria-busy={props.loading || undefined}
       className={classes}
     >
+      {props.loading ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
       {children}
     </button>
   );

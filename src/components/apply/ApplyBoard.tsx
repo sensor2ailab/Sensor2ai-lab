@@ -2,30 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowUpRight,
-  Briefcase,
-  ClipboardList,
-  Loader2,
-  Lock,
-  MapPin,
-  Pencil,
-  Plus,
-  Send,
-  ToggleLeft,
-  ToggleRight,
-  Trash2,
-} from "lucide-react";
+import { Briefcase, Loader2, MapPin, Plus, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { errorFromResponse } from "@/lib/api-error";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { IconButton } from "@/components/ui/IconButton";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MountStagger, MountStaggerItem } from "@/components/motion/Stagger";
 import { ApplicationForm } from "@/components/apply/ApplicationForm";
+import { JobCard } from "@/components/apply/JobCard";
 import { JobForm } from "@/components/apply/JobForm";
 import type { Job } from "@/lib/api-types";
 
@@ -84,6 +70,10 @@ export function ApplyBoard() {
       filter === "all" ? jobs : jobs.filter((j) => (filter === "open" ? j.isOpen : !j.isOpen));
     return [...filtered].sort((a, b) => Number(b.isOpen) - Number(a.isOpen));
   }, [jobs, isAdmin, filter]);
+
+  // Urgent, still-open roles get their own section at the top of the page.
+  const urgentJobs = useMemo(() => shown.filter((j) => j.urgent && j.isOpen), [shown]);
+  const otherJobs = useMemo(() => shown.filter((j) => !(j.urgent && j.isOpen)), [shown]);
 
   function openCreate() {
     setEditing(null);
@@ -164,7 +154,7 @@ export function ApplyBoard() {
                 key={f.key}
                 type="button"
                 onClick={() => setFilter(f.key)}
-                className={`rounded-pill inline-flex items-center gap-2 border px-3.5 py-1.5 text-sm font-medium transition-colors duration-[var(--dur-fast)] ${
+                className={`rounded-pill inline-flex items-center gap-2 border px-3.5 py-1.5 text-sm font-medium transition-colors duration-(--dur-fast) ${
                   filter === f.key
                     ? "border-primary bg-primary text-on-primary"
                     : "border-border text-secondary hover:border-primary hover:text-primary"
@@ -203,125 +193,75 @@ export function ApplyBoard() {
           <p>No positions to show.</p>
         </div>
       ) : (
-        <MountStagger className="grid gap-5 lg:grid-cols-2">
-          {shown.map((job) => (
-            <MountStaggerItem key={job.id} className="h-full">
-              <Card
-                hover
-                className={`flex h-full flex-col gap-5 p-6 ${isAdmin && !job.isOpen ? "opacity-70" : ""}`}
+        <div className="flex flex-col gap-10">
+          {/* Urgent hiring therefore, priority roles, surfaced first with a distinct treatment. */}
+          {urgentJobs.length > 0 ? (
+            <section className="flex flex-col gap-4" aria-labelledby="urgent-hiring">
+              <div className="flex items-center gap-3">
+                <h2 id="urgent-hiring" className="text-h3 font-semibold">
+                  Urgent hiring
+                </h2>
+                <span className="bg-accent text-on-primary rounded-pill px-2 py-0.5 text-xs font-bold tabular-nums">
+                  {urgentJobs.length}
+                </span>
+              </div>
+              <p className="text-secondary -mt-2 text-sm">
+                These roles are being filled on priority. Applications are reviewed first.
+              </p>
+              <MountStagger className="grid gap-5 lg:grid-cols-2">
+                {urgentJobs.map((job) => (
+                  <MountStaggerItem key={job.id} className="h-full">
+                    <JobCard
+                      job={job}
+                      isAdmin={isAdmin}
+                      isAnon={isAnon}
+                      pending={pendingId === job.id}
+                      onReview={(j) => router.push(`/admin/jobs/${j.id}`)}
+                      onEdit={openEdit}
+                      onToggle={(j) => void toggleOpen(j)}
+                      onDelete={setDeleteTarget}
+                      onApply={setApplyFor}
+                      onDetail={setDetailJob}
+                    />
+                  </MountStaggerItem>
+                ))}
+              </MountStagger>
+            </section>
+          ) : null}
+
+          {otherJobs.length > 0 ? (
+            <section className="flex flex-col gap-4" aria-labelledby="all-positions">
+              {/* Always present an h2 so the card h3s never follow the page h1 directly
+                  (keeps a valid heading order); hidden visually when it's the only group. */}
+              <h2
+                id="all-positions"
+                className={
+                  urgentJobs.length > 0 ? "text-h3 font-semibold" : "sr-only"
+                }
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <span className="bg-primary-soft text-primary-hover inline-flex size-11 shrink-0 items-center justify-center rounded-md">
-                      <Briefcase className="size-5" aria-hidden="true" />
-                    </span>
-                    <div className="flex flex-col gap-1">
-                      {isAdmin ? (
-                        <button
-                          type="button"
-                          onClick={() => router.push(`/admin/jobs/${job.id}`)}
-                          className="hover:text-primary text-left transition-colors duration-[var(--dur-fast)]"
-                        >
-                          <h3 className="text-h3 font-semibold">{job.title}</h3>
-                        </button>
-                      ) : (
-                        <h3 className="text-h3 font-semibold">{job.title}</h3>
-                      )}
-                      <div className="text-muted flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
-                        {job.employmentType ? (
-                          <span className="inline-flex items-center gap-1.5">
-                            <Briefcase className="size-3.5" aria-hidden="true" />
-                            {job.employmentType}
-                          </span>
-                        ) : null}
-                        {job.location ? (
-                          <span className="inline-flex items-center gap-1.5">
-                            <MapPin className="size-3.5" aria-hidden="true" />
-                            {job.location}
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-                  {isAdmin ? (
-                    <span
-                      className={`rounded-pill inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 text-xs font-semibold ${
-                        job.isOpen ? "bg-success-soft text-success" : "bg-surface-2 text-muted"
-                      }`}
-                    >
-                      <span
-                        className={`size-1.5 rounded-full ${job.isOpen ? "bg-success" : "bg-muted"}`}
-                      />
-                      {job.isOpen ? "Open" : "Closed"}
-                    </span>
-                  ) : null}
-                </div>
-
-                <p className="text-secondary line-clamp-3 text-sm whitespace-pre-line">
-                  {job.description}
-                </p>
-
-                {isAdmin ? (
-                  <div className="border-border items-around mt-auto flex flex-col justify-between gap-2 border-t pt-4 md:flex-row md:items-center">
-                    <Button size="sm" onClick={() => router.push(`/admin/jobs/${job.id}`)}>
-                      <ClipboardList className="size-4" aria-hidden="true" />
-                      Review applications
-                    </Button>
-                    <div className="flex justify-evenly gap-1.5 pt-2 md:items-center md:pt-0">
-                      <IconButton
-                        label="Edit position"
-                        icon={Pencil}
-                        onClick={() => openEdit(job)}
-                      />
-                      <IconButton
-                        label={job.isOpen ? "Close position" : "Reopen position"}
-                        icon={job.isOpen ? ToggleRight : ToggleLeft}
-                        busy={pendingId === job.id}
-                        onClick={() => void toggleOpen(job)}
-                      />
-                      <IconButton
-                        label="Delete position"
-                        icon={Trash2}
-                        variant="danger"
-                        onClick={() => setDeleteTarget(job)}
-                      />
-                    </div>
-                  </div>
-                ) : isAnon ? (
-                  <div className="border-border mt-auto flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-                    <Button size="sm" onClick={() => setApplyFor(job)}>
-                      <Send className="size-4" aria-hidden="true" />
-                      Apply now
-                    </Button>
-                    <button
-                      type="button"
-                      onClick={() => setDetailJob(job)}
-                      className="text-primary border-accent hover:text-primary-soft hover:bg-primary focus:text-primary-hover focus:bg-accent inline-flex items-center gap-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors duration-[var(--dur-fast)]"
-                    >
-                      Read more
-                      <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="border-border mt-auto flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setDetailJob(job)}
-                      className="text-primary hover:text-primary-hover inline-flex items-center gap-1 text-sm font-medium transition-colors duration-[var(--dur-fast)]"
-                    >
-                      Read more
-                      <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </button>
-                    <span className="text-muted inline-flex items-center gap-1.5 text-sm">
-                      <Lock className="size-4" aria-hidden="true" />
-                      Sign out to apply
-                    </span>
-                  </div>
-                )}
-              </Card>
-            </MountStaggerItem>
-          ))}
-        </MountStagger>
+                {urgentJobs.length > 0 ? "All positions" : "Open positions"}
+              </h2>
+              <MountStagger className="grid gap-5 lg:grid-cols-2">
+                {otherJobs.map((job) => (
+                  <MountStaggerItem key={job.id} className="h-full">
+                    <JobCard
+                      job={job}
+                      isAdmin={isAdmin}
+                      isAnon={isAnon}
+                      pending={pendingId === job.id}
+                      onReview={(j) => router.push(`/admin/jobs/${j.id}`)}
+                      onEdit={openEdit}
+                      onToggle={(j) => void toggleOpen(j)}
+                      onDelete={setDeleteTarget}
+                      onApply={setApplyFor}
+                      onDetail={setDetailJob}
+                    />
+                  </MountStaggerItem>
+                ))}
+              </MountStagger>
+            </section>
+          ) : null}
+        </div>
       )}
 
       <Modal
@@ -406,10 +346,9 @@ export function ApplyBoard() {
               size="sm"
               className="bg-danger hover:bg-danger text-on-primary"
               onClick={() => void confirmDelete()}
+              loading={pendingId === deleteTarget?.id}
             >
-              {pendingId === deleteTarget?.id ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              ) : (
+              {pendingId === deleteTarget?.id ? null : (
                 <Trash2 className="size-4" aria-hidden="true" />
               )}
               Delete

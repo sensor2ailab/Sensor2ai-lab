@@ -3,7 +3,7 @@
 import { m, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { LogIn, ShieldCheck, Loader2 } from "lucide-react";
+import { LogIn, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -117,8 +117,7 @@ export function LoginForm() {
                 placeholder="Your password"
               />
             </Field>
-            <Button type="submit" className="mt-1 w-full">
-              {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+            <Button type="submit" className="mt-1 w-full" loading={busy}>
               {busy ? "Signing in" : "Sign in"}
             </Button>
           </form>
@@ -147,8 +146,7 @@ export function LoginForm() {
                 onChange={(e) => setConfirm(e.target.value)}
               />
             </Field>
-            <Button type="submit" className="mt-1 w-full">
-              {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+            <Button type="submit" className="mt-1 w-full" loading={busy}>
               {busy ? "Updating" : "Update password and continue"}
             </Button>
           </form>

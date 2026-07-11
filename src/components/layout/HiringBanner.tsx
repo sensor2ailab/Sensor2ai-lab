@@ -26,10 +26,12 @@ export function HiringBanner() {
 
   useEffect(() => {
     let active = true;
+    // The public jobs endpoint already returns only open positions; the banner shows
+    // only when at least one of them is flagged urgent.
     fetch("/api/v1/jobs")
       .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((b: { items?: unknown[] }) => {
-        if (active) setHasOpenings((b.items?.length ?? 0) > 0);
+      .then((b: { items?: { urgent?: boolean }[] }) => {
+        if (active) setHasOpenings((b.items ?? []).some((j) => j.urgent));
       })
       .catch(() => {
         if (active) setHasOpenings(false);
@@ -56,7 +58,7 @@ export function HiringBanner() {
   return (
     <div
       data-dismissed={collapsed || undefined}
-      className="hiring-banner grid grid-rows-[1fr] transition-[grid-template-rows] duration-[var(--dur-base)] ease-[var(--ease-out)] data-[dismissed]:grid-rows-[0fr] motion-reduce:transition-none"
+      className="hiring-banner grid grid-rows-[1fr] transition-[grid-template-rows] duration-(--dur-base) ease-out data-dismissed:grid-rows-[0fr] motion-reduce:transition-none"
     >
       <div className="min-h-0 overflow-hidden">
         <aside
@@ -77,11 +79,11 @@ export function HiringBanner() {
 
             <Link
               href={site.hiring.href}
-              className="group text-primary hover:text-primary-hover inline-flex shrink-0 items-center gap-1 font-bold transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+              className="group text-primary hover:text-primary-hover inline-flex shrink-0 items-center gap-1 font-bold transition-colors duration-(--dur-fast) ease-out"
             >
               {site.hiring.cta}
               <ArrowRight
-                className="size-4 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] group-hover:translate-x-0.5"
+                className="size-4 transition-transform duration-(--dur-fast) ease-out group-hover:translate-x-0.5"
                 aria-hidden="true"
               />
             </Link>
@@ -91,7 +93,7 @@ export function HiringBanner() {
             type="button"
             onClick={dismiss}
             aria-label="Dismiss hiring announcement"
-            className="rounded-pill text-muted hover:bg-surface-2 hover:text-foreground absolute right-3 inline-flex size-6 items-center justify-center transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+            className="rounded-pill text-muted hover:bg-surface-2 hover:text-foreground absolute right-3 inline-flex size-6 items-center justify-center transition-colors duration-(--dur-fast) ease-out"
           >
             <X className="size-4" aria-hidden="true" />
           </button>

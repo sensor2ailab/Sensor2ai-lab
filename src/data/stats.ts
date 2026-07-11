@@ -6,7 +6,7 @@ export const stats: StatItem[] = [
   {
     id: "publications",
     label: "Publications",
-    value: 48,
+    value: 25,
     suffix: "+",
     href: "/publications",
     icon: FileText,

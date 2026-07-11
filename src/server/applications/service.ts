@@ -11,6 +11,7 @@ export interface SubmitApplicationInput {
   name: string;
   email: string;
   phone: string;
+  college?: string | null;
   coverLetter?: string;
   resumeLink: string;
 }
@@ -30,6 +31,7 @@ export async function submitApplication(input: SubmitApplicationInput): Promise<
         name: input.name,
         email: input.email,
         phone: input.phone,
+        college: input.college ?? null,
         coverLetter: input.coverLetter,
         resumeLink: input.resumeLink,
       },
@@ -141,12 +143,24 @@ export async function approveApplication(
           email: app.email,
           fullName: app.name,
           phone: app.phone,
+          collegeName: app.college,
+          hiredAt: new Date(),
           role: "user",
           passwordHash: passwordHash as string,
           mustChangePassword: true,
         },
       });
       created = true;
+    } else {
+      // Existing account: stamp membership (and fill in the college if we now have one)
+      // so they appear on the Hired page even if this posting is later deleted.
+      user = await tx.user.update({
+        where: { id: user.id },
+        data: {
+          hiredAt: user.hiredAt ?? new Date(),
+          collegeName: user.collegeName ?? app.college,
+        },
+      });
     }
     const application = await tx.application.update({
       where: { id },

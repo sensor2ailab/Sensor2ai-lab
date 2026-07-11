@@ -9,6 +9,7 @@ export interface CreateJobInput {
   location?: string | null;
   employmentType?: string | null;
   isOpen?: boolean;
+  urgent?: boolean;
 }
 
 export async function createJob(input: CreateJobInput, createdBy: string): Promise<Job> {
@@ -21,6 +22,7 @@ export interface UpdateJobInput {
   location?: string | null;
   employmentType?: string | null;
   isOpen?: boolean;
+  urgent?: boolean;
 }
 
 export async function updateJob(id: string, patch: UpdateJobInput): Promise<Job> {
@@ -47,8 +49,18 @@ export async function listOpenJobs(limit: number, cursor?: string): Promise<Page
   return toPage(rows, limit);
 }
 
-// Admin view: every position, open or closed, newest first.
-export async function listAllJobs(limit: number, cursor?: string): Promise<Page<Job>> {
-  const rows = await prisma.job.findMany({ ...cursorArgs(limit, cursor) });
-  return toPage(rows, limit);
+export type JobWithPending = Job & { pendingCount: number };
+
+// Admin view: every position, open or closed, newest first, each with its count of
+// applications still awaiting review.
+export async function listAllJobs(limit: number, cursor?: string): Promise<Page<JobWithPending>> {
+  const rows = await prisma.job.findMany({
+    ...cursorArgs(limit, cursor),
+    include: { _count: { select: { applications: { where: { status: "pending" } } } } },
+  });
+  const items: JobWithPending[] = rows.map(({ _count, ...job }) => ({
+    ...job,
+    pendingCount: _count.applications,
+  }));
+  return toPage(items, limit);
 }

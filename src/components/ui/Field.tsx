@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes, ReactNode } from "rea
 import { cn } from "@/lib/cn";
 
 const control =
-  "w-full rounded-md border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted transition-[border-color,box-shadow] duration-[var(--dur-fast)] ease-[var(--ease-out)] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-60";
+  "w-full rounded-md border border-border bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted transition-[border-color,box-shadow] duration-(--dur-fast) ease-out focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:opacity-60";
 
 interface LabelWrapProps {
   label: string;
@@ -42,7 +42,7 @@ export function FormMessage({ tone, children }: { tone: MessageTone; children: R
     <p
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "rounded-md px-3 py-2 text-sm",
+        "rounded-sm border border-dashed px-3 py-2 text-sm",
         tone === "error" ? "bg-danger-soft text-danger" : "bg-success-soft text-success",
       )}
     >

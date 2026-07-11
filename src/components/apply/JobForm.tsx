@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +22,7 @@ export function JobForm({ editing, onSaved, onCancel }: Props) {
   const [location, setLocation] = useState(editing?.location ?? "");
   const [employmentType, setEmploymentType] = useState(editing?.employmentType ?? "");
   const [isOpen, setIsOpen] = useState(editing?.isOpen ?? true);
+  const [urgent, setUrgent] = useState(editing?.urgent ?? false);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: FormEvent) {
@@ -35,6 +35,7 @@ export function JobForm({ editing, onSaved, onCancel }: Props) {
         location: location.trim() ? location.trim() : null,
         employmentType: employmentType.trim() ? employmentType.trim() : null,
         isOpen,
+        urgent,
       };
       const res = editing
         ? await authFetch(`/jobs/${editing.id}`, {
@@ -108,12 +109,21 @@ export function JobForm({ editing, onSaved, onCancel }: Props) {
         <span className="text-foreground font-medium">Open</span>
         <span className="text-muted">accepting applications</span>
       </label>
+      <label className="flex items-center gap-2.5 text-sm">
+        <input
+          type="checkbox"
+          className="accent-primary size-4"
+          checked={urgent}
+          onChange={(e) => setUrgent(e.target.checked)}
+        />
+        <span className="text-foreground font-medium">Urgent</span>
+        <span className="text-muted">shows the site-wide “We are hiring” banner</span>
+      </label>
       <div className="mt-2 flex justify-end gap-3">
         <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" size="sm">
-          {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+        <Button type="submit" size="sm" loading={busy}>
           {editing ? "Save changes" : "Create position"}
         </Button>
       </div>

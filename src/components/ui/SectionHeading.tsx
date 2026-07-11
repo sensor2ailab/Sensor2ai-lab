@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+import { Fragment } from "react";
 import { cn } from "@/lib/cn";
 
 interface SectionHeadingProps {
@@ -9,15 +11,19 @@ interface SectionHeadingProps {
   className?: string;
 }
 
-// Eyebrow + title + optional subtitle, used to open most sections.
+// Eyebrow + title + optional subtitle, used to open most sections. The title reveals
+// word by word on scroll (split-text effect) and the subtitle fades in after it, all
+// driven by the shared ScrollReveal observer — so it replays on scroll up and down.
 export function SectionHeading({
-  eyebrow,
+  eyebrow: _eyebrow,
   title,
   subtitle,
   align = "center",
   as: Tag = "h2",
   className,
 }: SectionHeadingProps) {
+  const words = title.split(" ");
+
   return (
     <div
       className={cn(
@@ -28,10 +34,26 @@ export function SectionHeading({
     >
       {/* Sized to match the staggered menu items for a bold, display-scale title. */}
       <Tag className="max-w-3xl text-[clamp(1.75rem,6vw,3rem)] leading-none text-balance">
-        {title}
+        {words.map((word, i) => (
+          <Fragment key={i}>
+            <span
+              data-reveal
+              suppressHydrationWarning
+              className="reveal-word"
+              style={{ "--reveal-delay": `${i * 0.05}s` } as CSSProperties}
+            >
+              {word}
+            </span>{" "}
+          </Fragment>
+        ))}
       </Tag>
       {subtitle ? (
-        <p className={cn("text-lead text-secondary max-w-2xl", align === "center" && "mx-auto")}>
+        <p
+          data-reveal
+          suppressHydrationWarning
+          style={{ "--reveal-delay": `${words.length * 0.05}s` } as CSSProperties}
+          className={cn("text-lead text-secondary max-w-2xl", align === "center" && "mx-auto")}
+        >
           {subtitle}
         </p>
       ) : null}

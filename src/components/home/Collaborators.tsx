@@ -25,17 +25,17 @@ export function Collaborators() {
                   href={item.href}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
-                  className="border-border bg-background hover:bg-surface-2 group flex h-full flex-col gap-4 border-r border-b p-6 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                  className="border-border bg-background hover:bg-surface-2 group flex h-full flex-col gap-4 border-r border-b p-6 transition-colors duration-(--dur-fast) ease-out"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span
                       aria-hidden="true"
-                      className="bg-surface-2 font-display text-secondary group-hover:bg-primary-soft group-hover:text-primary inline-flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                      className="bg-surface-2 font-display text-secondary group-hover:bg-primary-soft group-hover:text-primary inline-flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors duration-(--dur-fast) ease-out"
                     >
                       {initials(item.name, 3)}
                     </span>
                     <ArrowUpRight
-                      className="text-muted size-4 shrink-0 opacity-0 transition-[opacity,transform] duration-[var(--dur-fast)] ease-[var(--ease-out)] group-hover:translate-x-0.5 group-hover:opacity-100"
+                      className="text-muted size-4 shrink-0 opacity-0 transition-[opacity,transform] duration-(--dur-fast) ease-out group-hover:translate-x-0.5 group-hover:opacity-100"
                       aria-hidden="true"
                     />
                   </div>

@@ -17,7 +17,7 @@ export function Card({ children, className, hover = false, as: Tag = "div" }: Ca
       className={cn(
         "running-border border-border bg-background shadow-card relative rounded-lg border",
         hover &&
-          "hover:shadow-lift transition-[transform,box-shadow] duration-[var(--dur-base)] ease-[var(--ease-out)] will-change-transform hover:-translate-y-1",
+          "hover:shadow-lift transition-[transform,box-shadow] duration-(--dur-base) ease-out will-change-transform hover:-translate-y-1",
         className,
       )}
     >

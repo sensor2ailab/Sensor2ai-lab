@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Loader2, Plus, Search, Trash2 } from "lucide-react";
+import { BookOpen, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { errorFromResponse } from "@/lib/api-error";
@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { MountStagger, MountStaggerItem } from "@/components/motion/Stagger";
 import { PubItem } from "@/components/publications/PubItem";
 import { PublicationForm } from "@/components/publications/PublicationForm";
+import { AddTagsModal } from "@/components/publications/AddTagsModal";
 import { pubTypeLabel } from "@/lib/publication";
 import type { Publication } from "@/lib/api-types";
 
@@ -30,6 +31,9 @@ export function PublicationsBoard() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Every tag across all publications (from the server), so the filter row is complete
+  // even when only the first page of publications is loaded.
+  const [serverTags, setServerTags] = useState<string[]>([]);
   const [reloadKey, setReloadKey] = useState(0);
   const reload = () => {
     setPubs([]);
@@ -46,6 +50,7 @@ export function PublicationsBoard() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Publication | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Publication | null>(null);
+  const [addTagsTarget, setAddTagsTarget] = useState<Publication | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,6 +72,19 @@ export function PublicationsBoard() {
         if (active) setLoading(false);
       }
     })();
+    return () => {
+      active = false;
+    };
+  }, [reloadKey]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/v1/publications/tags")
+      .then((r) => (r.ok ? r.json() : { tags: [] }))
+      .then((b: { tags?: string[] }) => {
+        if (active) setServerTags(b.tags ?? []);
+      })
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -94,9 +112,14 @@ export function PublicationsBoard() {
     return ["All", ...Array.from(set).sort()];
   }, [pubs]);
 
+  // Server tags (all publications) merged with loaded pubs' tags, so a tag added just
+  // now shows up immediately without waiting for a refetch.
   const allTags = useMemo(
-    () => Array.from(new Set(pubs.flatMap((p) => p.tags))).sort((a, b) => a.localeCompare(b)),
-    [pubs],
+    () =>
+      Array.from(new Set([...serverTags, ...pubs.flatMap((p) => p.tags)])).sort((a, b) =>
+        a.localeCompare(b),
+      ),
+    [serverTags, pubs],
   );
 
   const filtered = useMemo(() => {
@@ -159,8 +182,8 @@ export function PublicationsBoard() {
     }
   }
 
-  const addTag = (pub: Publication, tag: string) =>
-    saveTags(pub, [...pub.tags, tag], "Tag added");
+  const addTags = (pub: Publication, newTags: string[]) =>
+    saveTags(pub, [...pub.tags, ...newTags], newTags.length === 1 ? "Tag added" : "Tags added");
   const removeTag = (pub: Publication, tag: string) =>
     saveTags(
       pub,
@@ -236,7 +259,7 @@ export function PublicationsBoard() {
         {stats.map((stat) => (
           <MountStaggerItem
             key={stat.label}
-            className="border-border bg-background hover:bg-primary-soft flex flex-col gap-2 border-r border-b p-6 transition-colors duration-[var(--dur-fast)]"
+            className="border-border bg-background hover:bg-primary-soft flex flex-col gap-2 border-r border-b p-6 transition-colors duration-(--dur-fast)"
           >
             <span className="text-muted text-xs font-semibold tracking-[0.18em] uppercase">
               {stat.label}
@@ -260,7 +283,7 @@ export function PublicationsBoard() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search title, author, or venue"
               aria-label="Search publications"
-              className="border-border bg-background text-foreground placeholder:text-muted focus:border-primary focus:ring-primary/25 w-full rounded-md border py-2.5 pr-3.5 pl-9 text-sm transition-[border-color,box-shadow] duration-[var(--dur-fast)] focus:ring-2 focus:outline-none"
+              className="border-border bg-background text-foreground placeholder:text-muted focus:border-primary focus:ring-primary/25 w-full rounded-md border py-2.5 pr-3.5 pl-9 text-sm transition-[border-color,box-shadow] duration-(--dur-fast) focus:ring-2 focus:outline-none"
             />
           </div>
           {types.length > 2 ? (
@@ -329,7 +352,7 @@ export function PublicationsBoard() {
                         isAdmin={isAdmin}
                         activeTags={activeTags}
                         onTagToggle={toggleTag}
-                        onAddTag={addTag}
+                        onOpenAddTags={setAddTagsTarget}
                         onRemoveTag={removeTag}
                         onEdit={(p) => {
                           setEditing(p);
@@ -348,8 +371,7 @@ export function PublicationsBoard() {
 
       {cursor ? (
         <div className="flex justify-center">
-          <Button variant="secondary" size="sm" onClick={() => void loadMore()}>
-            {loadingMore ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+          <Button variant="secondary" size="sm" onClick={() => void loadMore()} loading={loadingMore}>
             Load more
           </Button>
         </div>
@@ -389,10 +411,9 @@ export function PublicationsBoard() {
               size="sm"
               className="bg-danger hover:bg-danger text-on-primary"
               onClick={() => void confirmDelete()}
+              loading={pendingId === deleteTarget?.id}
             >
-              {pendingId === deleteTarget?.id ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              ) : (
+              {pendingId === deleteTarget?.id ? null : (
                 <Trash2 className="size-4" aria-hidden="true" />
               )}
               Delete
@@ -400,6 +421,13 @@ export function PublicationsBoard() {
           </div>
         </div>
       </Modal>
+
+      <AddTagsModal
+        key={addTagsTarget?.id ?? "none"}
+        pub={addTagsTarget}
+        onClose={() => setAddTagsTarget(null)}
+        onSave={addTags}
+      />
     </div>
   );
 }

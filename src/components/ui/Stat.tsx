@@ -39,12 +39,12 @@ export function Stat({ value, label, href, icon, note, suffix }: StatProps) {
     <Link
       ref={ref}
       href={href}
-      className="group border-border bg-background shadow-card hover:border-primary hover:shadow-lift relative flex h-full flex-col items-center gap-3 overflow-hidden rounded-lg border p-8 text-center transition-[transform,border-color,box-shadow] duration-[var(--dur-base)] ease-[var(--ease-out)] hover:-translate-y-1"
+      className="group border-border bg-background shadow-card hover:border-primary hover:shadow-lift relative flex h-full flex-col items-center gap-3 overflow-hidden rounded-lg border p-8 text-center transition-[transform,border-color,box-shadow] duration-(--dur-base) ease-out hover:-translate-y-1"
     >
       {/* Soft accent wash behind the icon so the card never reads empty. */}
       <span
         aria-hidden="true"
-        className="from-primary-soft pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b to-transparent opacity-70"
+        className="from-primary-soft pointer-events-none absolute inset-x-0 top-0 h-24 bg-linear-to-b to-transparent opacity-70"
       />
       <span className="bg-primary-soft text-primary-hover relative inline-flex size-14 items-center justify-center rounded-xl">
         {icon}
@@ -53,7 +53,7 @@ export function Stat({ value, label, href, icon, note, suffix }: StatProps) {
         {shown}
         {suffix}
       </span>
-      <span className="text-foreground group-hover:text-primary relative text-lg font-semibold transition-colors duration-[var(--dur-fast)]">
+      <span className="text-foreground group-hover:text-primary relative text-lg font-semibold transition-colors duration-(--dur-fast)">
         {label}
       </span>
       <span className="text-muted relative max-w-[26ch] text-sm text-balance">{note}</span>

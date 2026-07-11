@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 const baseChip =
-  "inline-flex items-center gap-2 rounded-pill border px-3.5 py-1.5 text-sm transition-[background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-out)]";
+  "inline-flex items-center gap-2 rounded-pill border px-3.5 py-1.5 text-sm transition-[background-color,color,border-color] duration-(--dur-fast) ease-out";
 
 interface StaticChipProps {
   children: ReactNode;
@@ -32,8 +32,10 @@ export function Chip(props: ChipProps) {
         aria-pressed={props.active}
         className={cn(
           baseChip,
+          // Active fill uses `primary` (AA-safe, ~5.2:1 with white). `accent` is brighter
+          // but only clears AA as large text, so it can't back small chip labels.
           props.active
-            ? "border-primary bg-accent text-on-primary"
+            ? "border-primary bg-primary text-on-primary"
             : "border-border bg-background text-secondary hover:border-primary hover:text-primary",
           className,
         )}

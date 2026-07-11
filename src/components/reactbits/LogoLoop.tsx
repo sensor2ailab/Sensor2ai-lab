@@ -334,7 +334,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
 
         const scaleClass =
           scaleOnHover &&
-          "transition-transform duration-[var(--dur-base)] ease-[var(--ease-out)] group-hover/item:scale-110";
+          "transition-transform duration-(--dur-base) ease-out group-hover/item:scale-110";
 
         const content = isNodeItem(item) ? (
           <span
@@ -349,7 +349,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           // eslint-disable-next-line @next/next/no-img-element
           <img
             className={cx(
-              "pointer-events-none block h-[var(--logoloop-logoHeight)] w-auto object-contain",
+              "pointer-events-none block h-(--logoloop-logoHeight) w-auto object-contain",
               "motion-reduce:transition-none",
               scaleClass,
             )}
@@ -372,7 +372,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
 
         const inner = item.href ? (
           <a
-            className="inline-flex items-center rounded no-underline transition-opacity duration-[var(--dur-fast)] hover:opacity-80"
+            className="inline-flex items-center rounded no-underline transition-opacity duration-(--dur-fast) hover:opacity-80"
             href={item.href}
             aria-label={itemAriaLabel || "logo link"}
             target="_blank"

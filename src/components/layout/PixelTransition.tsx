@@ -30,7 +30,7 @@ function Bars({ cols }: { cols: number }) {
 
 export function PixelTransition() {
   return (
-    <div aria-hidden="true" className="bg-surface text-ink w-full leading-[0]">
+    <div aria-hidden="true" className="bg-surface text-ink w-full leading-0">
       <div className="sm:hidden">
         <Bars cols={22} />
       </div>

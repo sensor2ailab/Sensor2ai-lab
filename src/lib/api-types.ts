@@ -31,6 +31,8 @@ export interface Job {
   location: string | null;
   employmentType: string | null;
   isOpen: boolean;
+  urgent: boolean;
+  pendingCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -64,11 +66,50 @@ export interface Application {
   name: string;
   email: string;
   phone: string;
+  college: string | null;
   resumeLink: string;
   coverLetter: string | null;
   status: ApplicationStatus;
   reviewedAt: string | null;
   createdAt: string;
+}
+
+export interface Notification {
+  id: string;
+  body: string;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export interface Hire {
+  userId: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  collegeName: string | null;
+  lastMeetingAt: string | null;
+  active: boolean;
+  jobTitles: string[];
+  notifications: Notification[];
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderRole: "admin" | "user";
+  body: string;
+  createdAt: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  lastMessageAt: string;
+  lastMessage: string | null;
+  unread: boolean;
 }
 
 // The error envelope every failing route returns.

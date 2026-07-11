@@ -71,6 +71,15 @@ export async function updatePublication(
   return prisma.publication.update({ where: { id }, data });
 }
 
+// Every distinct curator tag across all publications, sorted therefore, so the filter row can
+// show the full set regardless of pagination.
+export async function listAllTags(): Promise<string[]> {
+  const rows = await prisma.$queryRaw<{ tag: string }[]>(
+    Prisma.sql`SELECT DISTINCT jsonb_array_elements_text(tags) AS tag FROM publications ORDER BY tag`,
+  );
+  return rows.map((r) => r.tag);
+}
+
 export async function deletePublication(id: string): Promise<void> {
   await getPublication(id);
   await prisma.publication.delete({ where: { id } });

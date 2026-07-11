@@ -15,6 +15,7 @@ import {
 import { navItems } from "@/data/nav";
 import { site } from "@/data/site";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 
 // Ported from React Bits (Staggered Menu), rebuilt for this site: colors come from
 // tokens (no raw hex), it lives inside the existing header instead of drawing its
@@ -179,7 +180,7 @@ export function SiteMenu() {
     const toggle = toggleRef.current;
     const focusables = panel?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
     focusables?.[0]?.focus();
-    document.body.style.overflow = "hidden";
+    lockScroll();
 
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -202,7 +203,7 @@ export function SiteMenu() {
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      unlockScroll();
       toggle?.focus();
     };
   }, [open, closeMenu]);
@@ -242,13 +243,16 @@ export function SiteMenu() {
         <nav aria-label="Primary">
           <ul data-numbering className="flex flex-col gap-1">
             {navItems
-              .filter((item) => !item.authOnly || status === "authed")
+              .filter(
+                (item) =>
+                  (!item.authOnly || status === "authed") && (!item.adminOnly || isAdmin),
+              )
               .map((item) => (
                 <li key={item.href} className="relative overflow-hidden leading-none">
                   <a
                     href={item.href}
                     onClick={closeMenu}
-                    className="sm-item text-foreground hover:text-primary relative inline-block pr-12 text-[clamp(1.5rem,5vw,2.5rem)] font-extrabold tracking-tight uppercase transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                    className="sm-item text-foreground hover:text-primary relative inline-block pr-12 text-[clamp(1.5rem,5vw,2.5rem)] font-extrabold tracking-tight uppercase transition-colors duration-(--dur-fast) ease-out"
                   >
                     <span className="sm-itemLabel inline-block will-change-transform">
                       {item.label}
@@ -266,7 +270,7 @@ export function SiteMenu() {
               <a
                 href="/login"
                 onClick={closeMenu}
-                className="text-foreground hover:text-primary inline-flex w-fit items-center gap-2 text-lg font-semibold transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                className="text-foreground hover:text-primary inline-flex w-fit items-center gap-2 text-lg font-semibold transition-colors duration-(--dur-fast) ease-out"
               >
                 <LogIn className="size-5" aria-hidden="true" />
                 Sign in
@@ -284,7 +288,7 @@ export function SiteMenu() {
                 <button
                   type="button"
                   onClick={() => void logout()}
-                  className="text-secondary hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                  className="text-secondary hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-(--dur-fast) ease-out"
                 >
                   <LogOut className="size-4" aria-hidden="true" />
                   Sign out
@@ -302,7 +306,7 @@ export function SiteMenu() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="sm-social text-secondary hover:text-primary text-base font-medium transition-[color,opacity] duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+                    className="sm-social text-secondary hover:text-primary text-base font-medium transition-[color,opacity] duration-(--dur-fast) ease-out"
                   >
                     {social.label}
                   </a>
@@ -324,7 +328,7 @@ export function SiteMenu() {
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="site-menu-panel"
-        className="bg-primary text-on-primary hover:bg-primary-hover shadow-card relative z-50 inline-flex items-center justify-center rounded-full px-4 py-4 text-lg font-semibold tracking-tight transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out)]"
+        className="bg-primary mt-5 text-on-primary hover:bg-primary-hover shadow-card relative z-50 inline-flex items-center justify-center rounded-full px-4 py-4 text-lg font-semibold tracking-tight transition-colors duration-(--dur-fast) ease-out"
       >
         <span
           className="relative inline-block h-[1em] w-[3.6em] overflow-hidden text-center"

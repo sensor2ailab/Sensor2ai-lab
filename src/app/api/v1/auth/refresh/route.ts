@@ -1,5 +1,4 @@
 import { route, ok } from "@/server/http/respond";
-import { Errors } from "@/server/http/errors";
 import { clientMeta } from "@/server/http/request";
 import { enforceRateLimit } from "@/server/http/rate-limit";
 import { refreshSession } from "@/server/auth/service";
@@ -13,7 +12,10 @@ export const POST = route(async (req) => {
   const meta = clientMeta(req);
   enforceRateLimit(`refresh:${meta.ip ?? "unknown"}`, 60, 60_000);
   const presented = await getRefreshCookie();
-  if (!presented) throw Errors.unauthorized("Missing refresh token");
+  // No cookie = anonymous visitor. This endpoint is the app's silent "am I signed in?"
+  // probe on load, so "nobody is signed in" is a normal 200 with a null user, not a
+  // 401 (which the browser would log as a failed request on every anonymous page view).
+  if (!presented) return ok({ user: null });
   try {
     const result = await refreshSession(presented, meta);
     await setRefreshCookie(result.refreshToken, result.refreshExpiresAt);
