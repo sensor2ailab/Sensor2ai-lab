@@ -2,7 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Ban, Bell, CalendarClock, Loader2, MessagesSquare, Pencil, ShieldCheck } from "lucide-react";
+import {
+  Ban,
+  Bell,
+  CalendarClock,
+  Loader2,
+  MessagesSquare,
+  Pencil,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -132,10 +140,7 @@ export default function HiredPage() {
 
   const stats = useMemo(() => {
     const withMeeting = hires.filter((h) => h.lastMeetingAt).length;
-    const unread = hires.reduce(
-      (n, h) => n + h.notifications.filter((x) => !x.readAt).length,
-      0,
-    );
+    const unread = hires.reduce((n, h) => n + h.notifications.filter((x) => !x.readAt).length, 0);
     return { total: hires.length, withMeeting, unread };
   }, [hires]);
 
@@ -168,9 +173,7 @@ export default function HiredPage() {
         {/* Multi-update toolbar */}
         {selected.size > 0 ? (
           <div className="border-primary/40 bg-primary-soft/50 flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3">
-            <span className="text-foreground text-sm font-medium">
-              {selected.size} selected
-            </span>
+            <span className="text-foreground text-sm font-medium">{selected.size} selected</span>
             <div className="flex items-center gap-2">
               <CalendarClock className="text-muted size-4 shrink-0" aria-hidden="true" />
               <DatePicker
@@ -280,7 +283,11 @@ export default function HiredPage() {
                     </td>
                     <td className="p-3 text-right align-top">
                       <div className="flex items-center justify-end gap-2">
-                        <Button size="sm" variant="secondary" onClick={() => setEditTargetId(h.userId)}>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setEditTargetId(h.userId)}
+                        >
                           <Pencil className="size-4" aria-hidden="true" />
                           Edit
                         </Button>
@@ -329,12 +336,17 @@ function EditHireModal({
 }: {
   hire: Hire | null;
   onClose: () => void;
-  onSaved: (userId: string, patch: { collegeName: string | null; lastMeetingAt: string | null }) => void;
+  onSaved: (
+    userId: string,
+    patch: { collegeName: string | null; lastMeetingAt: string | null },
+  ) => void;
   onAccessChange: (userId: string, active: boolean) => void;
 }) {
   const { authFetch } = useAuth();
   const [college, setCollege] = useState(hire?.collegeName ?? "");
-  const [date, setDate] = useState<string | null>(hire ? toDateInput(hire.lastMeetingAt) || null : null);
+  const [date, setDate] = useState<string | null>(
+    hire ? toDateInput(hire.lastMeetingAt) || null : null,
+  );
   const [busy, setBusy] = useState(false);
   const [accessBusy, setAccessBusy] = useState(false);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
@@ -358,7 +370,9 @@ function EditHireModal({
       onAccessChange(hire.userId, body.active);
       setConfirmRevoke(false);
       toast.success(
-        body.active ? "Access restored" : "Access revoked therefore, the member has been signed out.",
+        body.active
+          ? "Access restored"
+          : "Access revoked therefore, the member has been signed out.",
       );
     } catch {
       toast.error("Network error, please try again.");
@@ -383,7 +397,10 @@ function EditHireModal({
         toast.error(await errorFromResponse(res));
         return;
       }
-      const body = (await res.json()) as { collegeName: string | null; lastMeetingAt: string | null };
+      const body = (await res.json()) as {
+        collegeName: string | null;
+        lastMeetingAt: string | null;
+      };
       onSaved(hire.userId, { collegeName: body.collegeName, lastMeetingAt: body.lastMeetingAt });
       toast.success("Member updated");
       onClose();

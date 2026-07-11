@@ -33,8 +33,7 @@ export function ScrollReveal() {
       seen.add(el);
       io.observe(el);
     };
-    const scan = (root: ParentNode) =>
-      root.querySelectorAll("[data-reveal]").forEach(observe);
+    const scan = (root: ParentNode) => root.querySelectorAll("[data-reveal]").forEach(observe);
 
     scan(document);
 

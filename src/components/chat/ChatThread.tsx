@@ -89,7 +89,9 @@ export function ChatThread({
                     )}
                   >
                     <p>{msg.body}</p>
-                    <p className={cn("mt-1 text-[10px]", mine ? "text-on-primary/70" : "text-muted")}>
+                    <p
+                      className={cn("mt-1 text-[10px]", mine ? "text-on-primary/70" : "text-muted")}
+                    >
                       {timeFmt.format(new Date(msg.createdAt))}
                     </p>
                   </div>

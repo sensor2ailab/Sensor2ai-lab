@@ -357,17 +357,17 @@ html,
     ),
     /* small brand-tinted rings, offset into the gaps */
     radial-gradient(
-      circle at 50% 50%,
-      transparent 0 5px,
-      color-mix(in oklab, var(--color-primary) 12%, transparent) 5px 6px,
-      transparent 6px
-    ),
+        circle at 50% 50%,
+        transparent 0 5px,
+        color-mix(in oklab, var(--color-primary) 12%, transparent) 5px 6px,
+        transparent 6px
+      ),
     /* soft wash from the top */
     linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--color-primary) 5%, transparent),
-      transparent 55%
-    );
+        180deg,
+        color-mix(in oklab, var(--color-primary) 5%, transparent),
+        transparent 55%
+      );
   background-size:
     64px 64px,
     64px 64px,

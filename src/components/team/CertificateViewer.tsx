@@ -41,7 +41,7 @@ export function CertificateViewer({ src, name }: { src: string; name: string }) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-secondary hover:border-primary hover:text-primary border-border mt-4 inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-[color,border-color] duration-(--dur-fast) ease-out"
+        className="text-secondary hover:border-primary hover:text-primary border-border rounded-pill mt-4 inline-flex items-center gap-2 border px-4 py-2 text-sm font-medium transition-[color,border-color] duration-(--dur-fast) ease-out"
       >
         <Award className="size-4" aria-hidden="true" />
         View certificate

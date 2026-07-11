@@ -16,16 +16,16 @@ const ROWS = [
 
 export function ChatThreadSkeleton() {
   return (
-    <div className="flex h-full min-h-0 flex-col" aria-busy="true" aria-label="Loading conversation">
+    <div
+      className="flex h-full min-h-0 flex-col"
+      aria-busy="true"
+      aria-label="Loading conversation"
+    >
       <div className="chat-surface flex-1 space-y-3 overflow-hidden p-4">
         {ROWS.map((r, i) => (
           <div key={i} className={cn("flex", r.mine ? "justify-end" : "justify-start")}>
             <Skeleton
-              className={cn(
-                "h-11 rounded-lg",
-                r.w,
-                r.mine ? "rounded-br-sm" : "rounded-bl-sm",
-              )}
+              className={cn("h-11 rounded-lg", r.w, r.mine ? "rounded-br-sm" : "rounded-bl-sm")}
             />
           </div>
         ))}

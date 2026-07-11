@@ -8,8 +8,18 @@ import { cn } from "@/lib/cn";
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -89,7 +99,9 @@ export function DatePicker({ value, onChange, placeholder = "Select date", id, c
         className="border-border bg-background hover:border-primary focus:border-primary focus:ring-primary/25 flex w-full items-center gap-2 rounded-md border px-3 py-2 text-sm transition-[border-color,box-shadow] duration-(--dur-fast) focus:ring-2 focus:outline-none"
       >
         <CalendarIcon className="text-muted size-4 shrink-0" aria-hidden="true" />
-        <span className={value ? "text-foreground" : "text-muted"}>{value ? label : placeholder}</span>
+        <span className={value ? "text-foreground" : "text-muted"}>
+          {value ? label : placeholder}
+        </span>
       </button>
 
       <AnimatePresence>

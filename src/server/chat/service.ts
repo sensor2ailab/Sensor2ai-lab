@@ -97,9 +97,7 @@ export async function listConversations(): Promise<ConversationSummary[]> {
     .map((c) => {
       const last = c.messages[0];
       const unread = Boolean(
-        last &&
-          last.senderRole === "user" &&
-          (!c.adminReadAt || last.createdAt > c.adminReadAt),
+        last && last.senderRole === "user" && (!c.adminReadAt || last.createdAt > c.adminReadAt),
       );
       return {
         id: c.id,

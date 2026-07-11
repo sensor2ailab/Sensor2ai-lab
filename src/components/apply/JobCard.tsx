@@ -64,7 +64,9 @@ export function JobCard({
           <span
             className={cn(
               "inline-flex size-11 shrink-0 items-center justify-center rounded-md",
-              urgent ? "border bg-primary running-border text-on-primary" : "bg-primary-soft text-primary-hover",
+              urgent
+                ? "bg-primary running-border text-on-primary border"
+                : "bg-primary-soft text-primary-hover",
             )}
           >
             <Briefcase className="size-5" aria-hidden="true" />

@@ -181,7 +181,10 @@ export default function InboxPage() {
                               {c.lastMessage ?? ""}
                             </span>
                           </span>
-                          <span className="bg-accent size-2 shrink-0 rounded-full" aria-label="unread" />
+                          <span
+                            className="bg-accent size-2 shrink-0 rounded-full"
+                            aria-label="unread"
+                          />
                         </Link>
                       </li>
                     ))}
@@ -200,7 +203,10 @@ export default function InboxPage() {
                   {lastMessages.map((m) => {
                     const mine = m.senderRole === "user";
                     return (
-                      <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
+                      <div
+                        key={m.id}
+                        className={cn("flex", mine ? "justify-end" : "justify-start")}
+                      >
                         <div
                           className={cn(
                             "max-w-[80%] rounded-lg px-3 py-1.5 text-sm",
@@ -218,7 +224,12 @@ export default function InboxPage() {
                             {mine ? "You" : "Admin"}
                           </span>
                           <p className="whitespace-pre-wrap">{m.body}</p>
-                          <p className={cn("mt-0.5 text-[10px]", mine ? "text-on-primary/70" : "text-muted")}>
+                          <p
+                            className={cn(
+                              "mt-0.5 text-[10px]",
+                              mine ? "text-on-primary/70" : "text-muted",
+                            )}
+                          >
                             {timeFmt.format(new Date(m.createdAt))}
                           </p>
                         </div>
@@ -238,7 +249,12 @@ export default function InboxPage() {
                   <span className="text-muted text-sm">{unreadNotifs} unread</span>
                 </div>
                 {unreadNotifs > 0 ? (
-                  <Button size="sm" variant="secondary" onClick={() => void markAllRead()} loading={marking}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => void markAllRead()}
+                    loading={marking}
+                  >
                     {marking ? null : <CheckCheck className="size-4" aria-hidden="true" />}
                     Mark all read
                   </Button>
@@ -284,7 +300,9 @@ export default function InboxPage() {
                     const unread = !n.readAt;
                     const cls = cn(
                       "block w-full rounded-lg border p-4 text-left transition-colors duration-(--dur-fast)",
-                      n.readAt ? "border-border bg-background" : "border-primary/40 bg-primary-soft/40",
+                      n.readAt
+                        ? "border-border bg-background"
+                        : "border-primary/40 bg-primary-soft/40",
                       unread && "hover:border-primary cursor-pointer",
                       isAnnouncement && "hover:border-primary",
                     );

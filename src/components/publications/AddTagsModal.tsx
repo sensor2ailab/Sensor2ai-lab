@@ -32,7 +32,10 @@ export function AddTagsModal({
   function stage(raw: string, base: string[]): string[] {
     const seen = new Set([...base.map((t) => t.toLowerCase()), ...existingLower]);
     const next = [...base];
-    for (const part of raw.split(",").map((s) => s.trim()).filter(Boolean)) {
+    for (const part of raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)) {
       const low = part.toLowerCase();
       if (!seen.has(low)) {
         seen.add(low);

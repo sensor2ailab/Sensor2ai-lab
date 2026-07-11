@@ -81,7 +81,7 @@ export function HeaderBell() {
     <Link
       href="/inbox"
       aria-label={total > 0 ? `Inbox, ${total} unread` : "Inbox"}
-      className="bg-background mt-5 text-foreground border-border hover:border-primary hover:text-primary shadow-card relative inline-flex size-13 items-center justify-center rounded-full border transition-colors duration-(--dur-fast) ease-out"
+      className="bg-background text-foreground border-border hover:border-primary hover:text-primary shadow-card relative mt-5 inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-(--dur-fast) ease-out sm:size-13"
     >
       {/* The bell rocks when the count rises, pairing the chime with a visual cue. */}
       <m.span

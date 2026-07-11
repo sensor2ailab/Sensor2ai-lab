@@ -235,9 +235,7 @@ export function ApplyBoard() {
                   (keeps a valid heading order); hidden visually when it's the only group. */}
               <h2
                 id="all-positions"
-                className={
-                  urgentJobs.length > 0 ? "text-h3 font-semibold" : "sr-only"
-                }
+                className={urgentJobs.length > 0 ? "text-h3 font-semibold" : "sr-only"}
               >
                 {urgentJobs.length > 0 ? "All positions" : "Open positions"}
               </h2>

@@ -338,72 +338,72 @@ export default function JobReviewPage() {
               </thead>
               <tbody>
                 <AnimatePresence initial={false}>
-                {visible.map((a) => (
-                  <m.tr
-                    key={a.id}
-                    layout="position"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, x: 24 }}
-                    transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
-                    className="border-border/70 border-b last:border-0"
-                  >
-                    <td className="p-3 align-top">
-                      <div className="text-foreground font-medium">{a.name}</div>
-                      {a.coverLetter ? (
-                        <p className="text-muted mt-1 max-w-xs text-xs whitespace-pre-line">
-                          {a.coverLetter}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className="text-secondary p-3 align-top">
-                      <div>{a.email}</div>
-                      <div className="text-muted">{a.phone}</div>
-                      {a.college ? <div className="text-muted">{a.college}</div> : null}
-                    </td>
-                    <td className="p-3 align-top">
-                      <a
-                        href={a.resumeLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:text-primary-hover inline-flex items-center gap-1 font-medium"
-                      >
-                        View
-                        <ExternalLink className="size-3.5" aria-hidden="true" />
-                      </a>
-                    </td>
-                    <td className="text-secondary p-3 align-top whitespace-nowrap">
-                      {formatDate(a.createdAt)}
-                    </td>
-                    <td className="p-3 align-top">
-                      <StatusPill status={a.status} />
-                    </td>
-                    <td className="p-3 text-right align-top">
-                      {a.status === "pending" ? (
-                        <div className="inline-flex gap-2">
-                          <Button size="sm" onClick={() => void startApprove(a)}>
-                            <Check className="size-4" aria-hidden="true" />
-                            Approve
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-danger hover:bg-danger-soft"
-                            onClick={() => {
-                              setRejectTarget(a);
-                              setDialogError(null);
-                            }}
-                          >
-                            <X className="size-4" aria-hidden="true" />
-                            Reject
-                          </Button>
-                        </div>
-                      ) : (
-                        <span className="text-muted text-xs">Reviewed</span>
-                      )}
-                    </td>
-                  </m.tr>
-                ))}
+                  {visible.map((a) => (
+                    <m.tr
+                      key={a.id}
+                      layout="position"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, x: 24 }}
+                      transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
+                      className="border-border/70 border-b last:border-0"
+                    >
+                      <td className="p-3 align-top">
+                        <div className="text-foreground font-medium">{a.name}</div>
+                        {a.coverLetter ? (
+                          <p className="text-muted mt-1 max-w-xs text-xs whitespace-pre-line">
+                            {a.coverLetter}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td className="text-secondary p-3 align-top">
+                        <div>{a.email}</div>
+                        <div className="text-muted">{a.phone}</div>
+                        {a.college ? <div className="text-muted">{a.college}</div> : null}
+                      </td>
+                      <td className="p-3 align-top">
+                        <a
+                          href={a.resumeLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-primary-hover inline-flex items-center gap-1 font-medium"
+                        >
+                          View
+                          <ExternalLink className="size-3.5" aria-hidden="true" />
+                        </a>
+                      </td>
+                      <td className="text-secondary p-3 align-top whitespace-nowrap">
+                        {formatDate(a.createdAt)}
+                      </td>
+                      <td className="p-3 align-top">
+                        <StatusPill status={a.status} />
+                      </td>
+                      <td className="p-3 text-right align-top">
+                        {a.status === "pending" ? (
+                          <div className="inline-flex gap-2">
+                            <Button size="sm" onClick={() => void startApprove(a)}>
+                              <Check className="size-4" aria-hidden="true" />
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-danger hover:bg-danger-soft"
+                              onClick={() => {
+                                setRejectTarget(a);
+                                setDialogError(null);
+                              }}
+                            >
+                              <X className="size-4" aria-hidden="true" />
+                              Reject
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-muted text-xs">Reviewed</span>
+                        )}
+                      </td>
+                    </m.tr>
+                  ))}
                 </AnimatePresence>
               </tbody>
             </table>

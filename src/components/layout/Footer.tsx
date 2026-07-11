@@ -17,8 +17,7 @@ const socials = [
 // Grid lines come from each cell's right/bottom border plus the top/left on the grid.
 const CELL = "border-on-ink/10 flex min-h-36 flex-col gap-3 border-r border-b p-6 sm:p-8";
 const LABEL = "text-on-ink/50 text-xs font-semibold tracking-[0.2em] uppercase";
-const LINK =
-  "text-on-ink/70 hover:text-accent transition-colors duration-(--dur-fast) ease-out";
+const LINK = "text-on-ink/70 hover:text-accent transition-colors duration-(--dur-fast) ease-out";
 
 // Dark footer. A full-bleed bento grid (brand, contact, connect, location, sitemap)
 // fills the top so it never reads as empty, then an oversized wordmark and the

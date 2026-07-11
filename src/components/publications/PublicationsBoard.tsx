@@ -371,7 +371,12 @@ export function PublicationsBoard() {
 
       {cursor ? (
         <div className="flex justify-center">
-          <Button variant="secondary" size="sm" onClick={() => void loadMore()} loading={loadingMore}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void loadMore()}
+            loading={loadingMore}
+          >
             Load more
           </Button>
         </div>

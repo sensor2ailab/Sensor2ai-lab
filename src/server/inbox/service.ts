@@ -25,7 +25,11 @@ export async function inboxSummary(userId: string, role: "admin" | "user"): Prom
     });
     for (const c of convos) {
       const last = c.messages[0];
-      if (last && last.senderRole === "user" && (!c.adminReadAt || last.createdAt > c.adminReadAt)) {
+      if (
+        last &&
+        last.senderRole === "user" &&
+        (!c.adminReadAt || last.createdAt > c.adminReadAt)
+      ) {
         messagesUnread += 1;
       }
     }

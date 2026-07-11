@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Pencil, Plus, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
@@ -43,7 +50,9 @@ export function PubItem({
         <p className="text-foreground text-sm font-semibold">{pub.authors.join(", ")}</p>
       ) : null}
 
-      <h3 className="text-h3 font-semibold">
+      {/* h2 (not h3): each publication sits directly under the page's h1 with no
+          intervening section heading, so h3 here breaks sequential heading order. */}
+      <h2 className="text-h3 font-semibold">
         {link ? (
           <Link
             href={link}
@@ -57,7 +66,7 @@ export function PubItem({
         ) : (
           pub.title
         )}
-      </h3>
+      </h2>
 
       {pub.venue ? <p className="text-secondary text-sm">{pub.venue}</p> : null}
 

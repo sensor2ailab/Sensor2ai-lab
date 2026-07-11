@@ -244,8 +244,7 @@ export function SiteMenu() {
           <ul data-numbering className="flex flex-col gap-1">
             {navItems
               .filter(
-                (item) =>
-                  (!item.authOnly || status === "authed") && (!item.adminOnly || isAdmin),
+                (item) => (!item.authOnly || status === "authed") && (!item.adminOnly || isAdmin),
               )
               .map((item) => (
                 <li key={item.href} className="relative overflow-hidden leading-none">
@@ -328,7 +327,7 @@ export function SiteMenu() {
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="site-menu-panel"
-        className="bg-primary mt-5 text-on-primary hover:bg-primary-hover shadow-card relative z-50 inline-flex items-center justify-center rounded-full px-4 py-4 text-lg font-semibold tracking-tight transition-colors duration-(--dur-fast) ease-out"
+        className="bg-primary text-on-primary hover:bg-primary-hover shadow-card relative z-50 mt-5 inline-flex items-center justify-center rounded-full px-3.5 py-2.5 text-sm font-semibold tracking-tight transition-colors duration-(--dur-fast) ease-out sm:px-4 sm:py-3 sm:text-base md:py-4 md:text-lg"
       >
         <span
           className="relative inline-block h-[1em] w-[3.6em] overflow-hidden text-center"
