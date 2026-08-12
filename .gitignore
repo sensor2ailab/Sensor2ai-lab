@@ -56,6 +56,8 @@ CLAUDE.md
 /.agents/
 /docs/
 skills-lock.json
+AGENTS.md
+/report/*
 
 # local dev resume storage
 /.uploads/
